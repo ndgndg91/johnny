@@ -5,6 +5,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import com.johnny.cs.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -22,8 +23,10 @@ public class SpreadSheetsController {
 
     private final SpreadSheetsService spreadSheetsService;
 
-    private static final String RANGE = "A:D";
-    private static final String SPREAD_SHEET_ID = "12E88gPUoIFYPo4KJd1Bby4P9FF_Q9SBmwzN_DkCHGn0";
+    @Value("${google.test.sheet.range}")
+    private String range;
+    @Value("${google.test.sheet.id}")
+    private String spreadSheetId;
 
     @GetMapping("/")
     public ResponseEntity<String> landing() {
@@ -34,7 +37,7 @@ public class SpreadSheetsController {
     public ResponseEntity<List<List<Object>>> getSheets() throws IOException, GeneralSecurityException, URISyntaxException {
         Sheets sheetsService = spreadSheetsService.createSheetsService();
         ValueRange response = sheetsService.spreadsheets().values()
-                .get(SPREAD_SHEET_ID, RANGE)
+                .get(spreadSheetId, range)
                 .execute();
 
         List<List<Object>> values = response.getValues();

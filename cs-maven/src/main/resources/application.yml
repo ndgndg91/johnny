@@ -3,6 +3,27 @@ spring:
     name: johnny
   autoconfigure:
     exclude:
-      - org.springframework.cloud.aws.autoconfigure.messaging.MessagingAutoConfiguration
-      - org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration
-      - org.springframework.cloud.aws.autoconfigure.context.ContextRegionProviderAutoConfiguration
+#      - org.springframework.cloud.aws.autoconfigure.messaging.MessagingAutoConfiguration
+#      - org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration
+#      - org.springframework.cloud.aws.autoconfigure.context.ContextRegionProviderAutoConfiguration
+google:
+  test:
+    service:
+      account:
+        email: johnny@johnny-267608.iam.gserviceaccount.com
+    key:
+      file:
+        location: classpath:johnny-267608-a456f7e05a0b.p12
+    sheet:
+      id: 12E88gPUoIFYPo4KJd1Bby4P9FF_Q9SBmwzN_DkCHGn0
+      range: A:D
+
+  service:
+    account:
+      email: johnny-spread-sheet@johnny-267812.iam.gserviceaccount.com
+  key:
+    file:
+      location: classpath:johnny-267812-b424a3495c1d.p12
+  sheet:
+    id: 18blkUm0JEAHCFWLutoSde-d0pMje-iIXJ72Iv5FFZ4Q
+    range: A:AI
