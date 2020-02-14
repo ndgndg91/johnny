@@ -1,12 +1,9 @@
 package com.johnny.cs;
 
-import com.johnny.cs.domain.Month;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.ResourceUtils;
-
-import java.io.*;
 
 @SpringBootTest
 class CsApplicationTests {
@@ -16,5 +13,4 @@ class CsApplicationTests {
         LocalDate now = LocalDate.now();
         System.out.println(now.getDayOfMonth());
     }
-
 }

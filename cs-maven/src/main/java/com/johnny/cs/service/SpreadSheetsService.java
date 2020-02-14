@@ -1,5 +1,8 @@
 package com.johnny.cs.service;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -9,13 +12,11 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.johnny.cs.domain.CSTeam;
 import com.johnny.cs.domain.Month;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
-
+import com.johnny.cs.util.LocalDateUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -23,8 +24,13 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 @Log4j2
 @Service
@@ -44,14 +50,38 @@ public class SpreadSheetsService {
     @Value("${google.sheet.id}")
     private String spreadSheetId;
 
-    public List<List<Object>> getValues() throws GeneralSecurityException, IOException, URISyntaxException {
+    public List<String> getTodayWeeklyChargers() throws GeneralSecurityException, IOException, URISyntaxException {
+        List<List<Object>> values = getValues();
+        return getTodayChargers(values)
+            .stream()
+            .filter(CSTeam::isNotCSTeam)
+            .collect(collectingAndThen(toList(), ImmutableList::copyOf));
+    }
+
+    public List<String> getTomorrowChargers() throws GeneralSecurityException, IOException, URISyntaxException {
+        List<List<Object>> values = getValues();
+        return getTomorrowChargers(values)
+            .stream()
+            .filter(CSTeam::isNotCSTeam)
+            .collect(collectingAndThen(toList(), ImmutableList::copyOf));
+    }
+
+    public List<String> getSpecificDayChargers(byte month, byte day)
+        throws GeneralSecurityException, IOException, URISyntaxException {
+        List<List<Object>> values = getValues();
+        return  getSpecificDayChargers(values, month, day)
+            .stream()
+            .filter(CSTeam::isNotCSTeam)
+            .collect(collectingAndThen(toList(), ImmutableList::copyOf));
+    }
+
+    private List<List<Object>> getValues() throws GeneralSecurityException, IOException, URISyntaxException {
         Sheets sheetsService = getCSChargersSheets();
         ValueRange response = sheetsService.spreadsheets().values()
             .get(spreadSheetId, getRange())
             .execute();
 
         log.info("{}", response);
-        getTodayChargers(response.getValues());
         return response.getValues();
     }
 
@@ -90,42 +120,73 @@ public class SpreadSheetsService {
         return String.valueOf(Month.getRowIndex());
     }
 
-    private void getTodayChargers(List<List<Object>> values){
-        LocalDate now = LocalDate.now();
-        String today = String.valueOf(now.getDayOfMonth());
-        String tomorrow = String.valueOf(now.plusDays(1).getDayOfMonth());
-        List<Object> rowContainingToday = getRowContainingToday(values, today);
-        List<String> todayChargers = extractTodayChargers(rowContainingToday, today, tomorrow);
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        log.info("{}", todayChargers);
-        log.info("{}", todayChargers.size());
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
+    private List<String> getTodayChargers(List<List<Object>> values) {
+        String today = LocalDateUtils.getTodayString();
+        String tomorrow = LocalDateUtils.getTomorrowString();
+        return getChargersByDay(values, today, tomorrow);
     }
 
-    private List<String> extractTodayChargers(List<Object> rowContainingToday, String today, String tomorrow) {
+    private List<String> getTomorrowChargers(List<List<Object>> values) {
+        String tomorrow = LocalDateUtils.getTomorrowString();
+        String dayAfterTomorrow = LocalDateUtils.getDayAfterTomorrowString();
+        return getChargersByDay(values, tomorrow, dayAfterTomorrow);
+    }
+
+    private List<String> getSpecificDayChargers(List<List<Object>> values, byte month, byte day){
+        LocalDate targetDate = LocalDate.now().withMonth(month).withDayOfMonth(day);
+        String targetDay = String.valueOf(targetDate.getDayOfMonth());
+        String dayAfterTargetDay = String.valueOf(targetDate.plusDays(1).getDayOfMonth());
+        return getChargersByDay(values, targetDay, dayAfterTargetDay);
+    }
+
+    private List<String> getChargersByDay(List<List<Object>> values, String targetDay, String dayAfterTargetDay) {
+        List<Object> rowContainingTomorrow = getRowContainingDay(values, targetDay);
+        List<String> tomorrowChargers = extractDayChargers(rowContainingTomorrow, targetDay, dayAfterTargetDay);
+        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        log.info("{}", tomorrowChargers);
+        log.info("{}", tomorrowChargers.size());
+        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        return tomorrowChargers;
+    }
+
+    private List<String> extractDayChargers(List<Object> rowContainingToday, String targetDay, String dayAfterTargetDay) {
         List<String> chargers = Lists.newArrayList();
         int startIdx = 0;
         int endIdx = rowContainingToday.size();
         for (int i = 0; i < rowContainingToday.size(); i++) {
-            if (rowContainingToday.get(i).equals(today)){
+            if (rowContainingToday.get(i).equals(targetDay)){
                 startIdx = i+1;
             }
 
-            if (rowContainingToday.get(i).equals(tomorrow)) {
+            if (rowContainingToday.get(i).equals(dayAfterTargetDay)) {
                 endIdx = i;
                 break;
             }
         }
 
         for (int i = startIdx; i < endIdx; i++) {
-            chargers.add(String.valueOf(rowContainingToday.get(i)));
+            String canBeTwoPeople = String.valueOf(rowContainingToday.get(i));
+            if (isTwoPeople(canBeTwoPeople)) {
+                addTwoChargers(canBeTwoPeople, chargers);
+                continue;
+            }
+
+            chargers.add(canBeTwoPeople);
         }
 
         return chargers;
     }
 
-    private List<Object> getRowContainingToday(List<List<Object>> values, String day){
+    private boolean isTwoPeople(String canBeTwoPeople){
+        return canBeTwoPeople.contains("\n/") && canBeTwoPeople.split("\n/").length >= 2;
+    }
+
+    private void addTwoChargers(Object maybeTwoChargers, List<String> chargers){
+        String[] twoChargers = String.valueOf(maybeTwoChargers).split("\n/");
+        chargers.addAll(Arrays.asList(twoChargers));
+    }
+
+    private List<Object> getRowContainingDay(List<List<Object>> values, String day){
         log.info("{}", day);
         List<Object> todayRow = new ArrayList<>();
         for (List<Object> row : values) {
@@ -138,4 +199,5 @@ public class SpreadSheetsService {
 
         return todayRow;
     }
+
 }

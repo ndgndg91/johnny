@@ -1,16 +1,20 @@
 package com.johnny.cs.controller;
 
+import com.johnny.cs.service.HolidayService;
 import com.johnny.cs.service.SpreadSheetsService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.util.List;
+import javax.xml.bind.JAXBException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Log4j2
 @Controller
@@ -19,19 +23,51 @@ public class SpreadSheetsController {
 
     private final SpreadSheetsService spreadSheetsService;
 
+    private final HolidayService holidayService;
+
     @GetMapping("/")
     public ResponseEntity<String> landing() {
         return ResponseEntity.ok("OK");
     }
 
-    @GetMapping("/get/sheet")
-    public ResponseEntity<List<List<Object>>> getSheets() throws IOException, GeneralSecurityException, URISyntaxException {
-        List<List<Object>> values = spreadSheetsService.getValues();
-        if (CollectionUtils.isEmpty(values)) {
+    @GetMapping("/get/todayWeeklyChargers")
+    public ResponseEntity<List<String>> getTodayChargers() throws IOException, GeneralSecurityException, URISyntaxException {
+        List<String> todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
+        if (CollectionUtils.isEmpty(todayWeeklyChargers)) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("{}", values);
-        return ResponseEntity.ok(values);
+        log.info("{}", todayWeeklyChargers);
+        return ResponseEntity.ok(todayWeeklyChargers);
+    }
+
+    @GetMapping("/get/tomorrowChargers")
+    public ResponseEntity<List<String>> getTomorrowChargers() throws GeneralSecurityException, IOException, URISyntaxException {
+        List<String> tomorrowChargers = spreadSheetsService.getTomorrowChargers();
+        if (CollectionUtils.isEmpty(tomorrowChargers)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        log.info("{}", tomorrowChargers);
+        return ResponseEntity.ok(tomorrowChargers);
+    }
+
+    @GetMapping("/get/{month}/{day}")
+    public ResponseEntity<List<String>> getChargersOfSpecificDay(@PathVariable byte month, @PathVariable byte day)
+        throws GeneralSecurityException, IOException, URISyntaxException {
+        List<String> specificDayChargers = spreadSheetsService.getSpecificDayChargers(month, day);
+        if (CollectionUtils.isEmpty(specificDayChargers)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        log.info("{}", specificDayChargers);
+        return ResponseEntity.ok(specificDayChargers);
+    }
+
+    @GetMapping("/holiday/{year}/{month}")
+    public ResponseEntity<String> isHoliday(@PathVariable int year, @PathVariable int month)
+        throws IOException, JAXBException {
+        holidayService.isHoliday(LocalDate.now().withYear(year).withMonth(month));
+        return ResponseEntity.ok("Dd");
     }
 }

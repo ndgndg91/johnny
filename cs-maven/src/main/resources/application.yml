@@ -27,3 +27,8 @@ google:
   sheet:
     id: 18blkUm0JEAHCFWLutoSde-d0pMje-iIXJ72Iv5FFZ4Q
     range: A:AI
+
+open:
+  api:
+    endpoint: http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo
+    key: 8ttrttea2Kp2Dl5HWGSORhtONQJiBviK3U%2FFBEJ773%2FX74aXTXlRhb%2BVtwcFAyaTtA77KUEl3DFN3c7SbBwe%2FQ%3D%3D
