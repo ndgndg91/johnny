@@ -42,7 +42,7 @@ public class HolidayService {
         String url = createUrl(target);
         log.info(url);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set(CONTENT_TYPE, ContentType.APPLICATION_JSON);
+        httpHeaders.set("Content-Type", "application/json");
         HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
         HttpResponse rawResponse = request.execute();
         InputStream content = rawResponse.getContent();
