@@ -64,10 +64,10 @@ public class SpreadSheetsController {
         return ResponseEntity.ok(specificDayChargers);
     }
 
-    @GetMapping("/holiday/{year}/{month}")
-    public ResponseEntity<String> isHoliday(@PathVariable int year, @PathVariable int month)
+    @GetMapping("/holiday/{month}/{day}")
+    public ResponseEntity<Boolean> isHoliday(@PathVariable int month, @PathVariable int day)
         throws IOException, JAXBException {
-        holidayService.isHoliday(LocalDate.now().withYear(year).withMonth(month));
-        return ResponseEntity.ok("Dd");
+        return ResponseEntity
+            .ok(holidayService.isHoliday(LocalDate.now().withMonth(month).withDayOfMonth(day)));
     }
 }

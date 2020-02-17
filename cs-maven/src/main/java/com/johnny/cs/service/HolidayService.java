@@ -1,6 +1,7 @@
 package com.johnny.cs.service;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
@@ -16,10 +17,12 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +36,13 @@ public class HolidayService {
     @Value("${open.api.endpoint}")
     private String endPoint;
 
-    public void isHoliday(LocalDate target) throws IOException, JAXBException {
+    public boolean isHoliday(LocalDate target) throws IOException, JAXBException {
         HttpRequestFactory requestFactory
             = new NetHttpTransport().createRequestFactory();
         String url = createUrl(target);
         log.info(url);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Content-type", "application/json");
+        httpHeaders.set(CONTENT_TYPE, ContentType.APPLICATION_JSON);
         HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
         HttpResponse rawResponse = request.execute();
         InputStream content = rawResponse.getContent();
@@ -52,6 +55,7 @@ public class HolidayService {
         StringReader reader = new StringReader(response);
         HolidayResponse holidays = (HolidayResponse) unmarshaller.unmarshal(reader);
         log.info("{}", holidays);
+        return isHoliday(target, holidays);
     }
 
     private String createUrl(LocalDate target) {
@@ -65,5 +69,12 @@ public class HolidayService {
     private String getMonthString(LocalDate target){
         String monthString = String.valueOf(target.getMonth().getValue());
         return monthString.length() == 1 ? "0"+ target.getMonth().getValue() : monthString;
+    }
+
+    private boolean isHoliday(LocalDate target, HolidayResponse response) {
+        return response.getBody().getItems().getItems().stream().anyMatch(item -> {
+            LocalDate parsed = LocalDate.parse(item.getLocdate(), DateTimeFormatter.ofPattern("uuuuMMdd"));
+            return parsed.equals(target);
+        });
     }
 }
