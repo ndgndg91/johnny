@@ -42,7 +42,7 @@ public class LineWorksService {
 
     public void getAccessCode() throws InterruptedException {
         log.info(authUrl);
-        System.setProperty("webdriver.chrome.driver", "classpath:chromedriver");
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver");
         WebDriver driver = new ChromeDriver();
         Thread.sleep(500);
         driver.get(authUrl);
