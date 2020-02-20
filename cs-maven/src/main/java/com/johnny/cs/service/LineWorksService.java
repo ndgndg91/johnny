@@ -1,12 +1,16 @@
 package com.johnny.cs.service;
 
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
+import com.johnny.cs.domain.line.request.AccessCodeRequest;
 import lombok.extern.log4j.Log4j2;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,72 +22,62 @@ import java.io.InputStreamReader;
 @Service
 public class LineWorksService {
 
-    @Value("${api.auth}")
+    @Value("${api.auth.url}")
     private String authUrl;
-    @Value("${api.host}")
+    @Value("${api.auth.host}")
     private String apiHost;
-    @Value("${api.apiId}")
+    @Value("${api.auth.apiId}")
     private String apiId;
-    @Value("${api.serviceApiConsumerKey}")
+    @Value("${api.auth.serviceApiConsumerKey}")
     private String serviceApiConsumerKey;
-    @Value("${api.firstPath}")
-    private String firstPath;
-    @Value("${api.secondPath}")
-    private String secondPath;
-    @Value("${api.clientIdKey}")
-    private String clientIdKey;
-    @Value("${api.redirectUriKey}")
-    private String redirectUriKey;
-    @Value("${api.redirectUriValue}")
-    private String redirectUriValue;
-    @Value("${api.stateKey}")
-    private String stateKey;
-    @Value("${api.stateValue}")
-    private String stateValue;
-    @Value("${api.domainKey}")
-    private String domainKey;
-    @Value("${api.domainValue}")
-    private String domainValue;
 
-    public void getAccessCode() throws IOException {
+    @Value("${help.id}")
+    private String helpId;
+    @Value("${help.password}")
+    private String helpPassword;
+
+    @Value("${api.accessCode.url}")
+    private String accessCodeUrl;
+
+
+    public void getAccessCode() throws InterruptedException {
         log.info(authUrl);
+        System.setProperty("webdriver.chrome.driver", "classpath:chromedriver");
+        WebDriver driver = new ChromeDriver();
+        Thread.sleep(500);
+        driver.get(authUrl);
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        if (executor.executeScript("return document.readyState").equals("complete")) {
+            log.info("완료 했엉!");
+            WebElement inputId = driver.findElement(By.id("inputId"));
+            inputId.clear();
+            inputId.sendKeys(helpId);
+            WebElement inputPassword = driver.findElement(By.id("password"));
+            inputPassword.clear();
+            inputPassword.sendKeys(helpPassword);
+            Thread.sleep(1000);
+            WebElement btn = driver.findElement(By.className("btn"));
+            btn.click();
+        }
+        driver.close();
+    }
+
+    public void getAccessToken(String code) throws IOException {
         HttpRequestFactory requestFactory
                 = new NetHttpTransport().createRequestFactory();
-        HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(authUrl));
-        HttpResponse httpResponse = request.execute();
-        InputStream content = httpResponse.getContent();
-        String response = CharStreams.toString(new InputStreamReader(content));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("consumerKey", serviceApiConsumerKey);
+        httpHeaders.set("Authorization", "Bearer " + code);
 
-        log.info(response);
+        ObjectMapper mapper = new ObjectMapper();
+        String params = mapper.writeValueAsString(AccessCodeRequest.getRequest(serviceApiConsumerKey, code));
+        HttpRequest request = requestFactory
+                .buildPostRequest(new GenericUrl(accessCodeUrl), ByteArrayContent.fromString(null, params))
+                .setHeaders(httpHeaders);
+
+        HttpResponse response = request.execute();
+        InputStream content = response.getContent();
+        String result = CharStreams.toString(new InputStreamReader(content));
+        log.info(result);
     }
-
-    public void getAccessToken(String code) {
-
-    }
-
-//    public void callApi() throws IOException {
-//        HttpRequestFactory requestFactory
-//                = new NetHttpTransport().createRequestFactory();
-//        String url = createUrl();
-//        log.info(url);
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.set("consumerKey", SERVER_API_CONSUMER_KEY);
-//        httpHeaders.set("Authorization", "Bearer " + ACCESS_TOKEN);
-//        httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-//
-//        HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
-//        HttpResponse httpResponse = request.execute();
-//        InputStream content = httpResponse.getContent();
-//        String response = CharStreams.toString(new InputStreamReader(content));
-//
-//        log.info(response);
-//    }
-//
-//    private String createUrl(){
-//       StringBuilder urlBuilder = new StringBuilder(API_HOST)
-//               .append("/r/")
-//               .append(API_ID)
-//               .append("/mail/v2/getFolderList");
-//       return urlBuilder.toString();
-//    }
 }

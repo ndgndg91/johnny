@@ -16,22 +16,24 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LineWorksController {
 
-    @Value("${api.stateValue}")
+    @Value("${api.auth.state}")
     private String state;
 
     private final LineWorksService lineWorksService;
 
     @GetMapping("/line/sixshop")
-    public ResponseEntity<Void> lineXSixShop(AuthorizationCodeRequest request){
-       log.info("들어왔따잉");
+    public ResponseEntity<Void> lineXSixShop(AuthorizationCodeRequest request) throws IOException {
        log.info("{}", request);
-       log.info(request.getState().equals(state));
+       if ( ! request.getState().equals(state)) {
+           return ResponseEntity.badRequest().build();
+       }
+
        lineWorksService.getAccessToken(request.getCode());
        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/line/test")
-    public ResponseEntity<Void> lineTest() throws IOException {
+    public ResponseEntity<Void> lineTest() throws InterruptedException {
         lineWorksService.getAccessCode();
         return ResponseEntity.ok().build();
     }
