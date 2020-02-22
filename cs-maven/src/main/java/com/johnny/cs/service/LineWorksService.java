@@ -1,10 +1,9 @@
 package com.johnny.cs.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
-import com.johnny.cs.domain.line.request.AccessCodeRequest;
+import com.johnny.cs.domain.line.request.AccessTokenRequest;
 import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -36,8 +35,8 @@ public class LineWorksService {
     @Value("${help.password}")
     private String helpPassword;
 
-    @Value("${api.accessCode.url}")
-    private String accessCodeUrl;
+    @Value("${api.accessToken.url}")
+    private String accessTokenUrl;
 
 
     public void getAccessCode() throws InterruptedException {
@@ -69,10 +68,10 @@ public class LineWorksService {
         httpHeaders.set("consumerKey", serviceApiConsumerKey);
         httpHeaders.set("Authorization", "Bearer " + code);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String params = mapper.writeValueAsString(AccessCodeRequest.getRequest(serviceApiConsumerKey, code));
+        AccessTokenRequest accessTokenRequest = AccessTokenRequest.getRequest(serviceApiConsumerKey, code);
+        String url = accessTokenRequest.addQueryString(accessTokenUrl);
         HttpRequest request = requestFactory
-                .buildPostRequest(new GenericUrl(accessCodeUrl), ByteArrayContent.fromString(null, params))
+                .buildGetRequest(new GenericUrl(url))
                 .setHeaders(httpHeaders);
 
         HttpResponse response = request.execute();

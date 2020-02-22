@@ -33,8 +33,8 @@ public class LineWorksController {
     }
 
     @GetMapping("/line/test")
-    public ResponseEntity<Void> lineTest() throws InterruptedException {
+    public ResponseEntity<String> lineTest() throws InterruptedException {
         lineWorksService.getAccessCode();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("일단 OK");
     }
 }
