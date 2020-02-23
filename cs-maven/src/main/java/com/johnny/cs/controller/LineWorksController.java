@@ -1,6 +1,7 @@
 package com.johnny.cs.controller;
 
 import com.johnny.cs.domain.line.request.AuthorizationCodeRequest;
+import com.johnny.cs.domain.line.response.AccessCodeResponse;
 import com.johnny.cs.service.LineWorksService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,8 +29,13 @@ public class LineWorksController {
            return ResponseEntity.badRequest().build();
        }
 
-       lineWorksService.getAccessToken(request.getCode());
-       return ResponseEntity.ok().build();
+       AccessCodeResponse accessToken = lineWorksService.getAccessToken(request.getCode());
+       if ( ! accessToken.getErrorCode().equals("00")) {
+           return ResponseEntity.status(401).build();
+       }
+
+       lineWorksService.testApi(accessToken.getAccessToken());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/line/test")

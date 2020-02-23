@@ -1,16 +1,16 @@
 package com.johnny.cs.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
 import com.johnny.cs.domain.HolidayResponse;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,13 +18,8 @@ import java.io.StringReader;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import lombok.extern.log4j.Log4j2;
-import org.apache.http.entity.ContentType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Log4j2
 @Service
