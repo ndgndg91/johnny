@@ -1,5 +1,6 @@
 package com.johnny.cs.job;
 
+import com.johnny.cs.service.HolidayService;
 import com.johnny.cs.service.LineWorksService;
 import com.johnny.cs.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,12 @@ public class SendJobForUnRepliedMailAlarm implements Job {
 
     private final SpreadSheetsService spreadSheetsService;
 
+    private final HolidayService holidayService;
+
     private final LineWorksService lineWorksService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-
+        System.out.println("테스트다!");
     }
 }
