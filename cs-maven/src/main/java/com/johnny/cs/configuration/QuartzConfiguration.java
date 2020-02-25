@@ -1,12 +1,17 @@
 package com.johnny.cs.configuration;
 
 import com.johnny.cs.job.*;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+@Slf4j
 @Configuration
 public class QuartzConfiguration {
 
@@ -68,7 +73,15 @@ public class QuartzConfiguration {
     public CronTriggerFactoryBean unRepliedMailAlarmTrigger(JobDetail sendJobForUnRepliedMailAlarmDetail) {
         CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
         trigger.setJobDetail(sendJobForUnRepliedMailAlarmDetail);
-        trigger.setCronExpression("0 0/5 * * * ?");
+        trigger.setCronExpression("0 * * ? * *");
         return trigger;
+    }
+
+    @Bean
+    public Scheduler unRepliedMailAlarmScheduler(SchedulerFactoryBean factory)
+            throws SchedulerException {
+        Scheduler scheduler = factory.getScheduler();
+        scheduler.start();
+        return scheduler;
     }
 }

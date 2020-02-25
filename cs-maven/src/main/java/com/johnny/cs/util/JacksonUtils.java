@@ -1,9 +1,9 @@
 package com.johnny.cs.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 public final class JacksonUtils {
     private static final ObjectMapper mapper = new ObjectMapper();
 

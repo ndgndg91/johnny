@@ -7,7 +7,7 @@ import com.johnny.cs.domain.line.request.AccessTokenRequest;
 import com.johnny.cs.domain.line.response.AccessCodeResponse;
 import com.johnny.cs.domain.line.response.MailListResponse;
 import com.johnny.cs.util.JacksonUtils;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Log4j2
+@Slf4j
 @Service
 public class LineWorksService {
 
@@ -108,7 +108,7 @@ public class LineWorksService {
         String result = CharStreams.toString(new InputStreamReader(content));
         log.info(result);
         MailListResponse mails = JacksonUtils.getMapper().readValue(result, MailListResponse.class);
-        log.info(mails);
+        log.info("{}", mails);
     }
 
     private String createUrl(){

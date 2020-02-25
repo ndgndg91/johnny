@@ -2,21 +2,22 @@ package com.johnny.cs.controller;
 
 import com.johnny.cs.service.HolidayService;
 import com.johnny.cs.service.SpreadSheetsService;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
-import java.time.LocalDate;
-import java.util.List;
-import javax.xml.bind.JAXBException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@Log4j2
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.util.List;
+
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SpreadSheetsController {
@@ -65,8 +66,7 @@ public class SpreadSheetsController {
     }
 
     @GetMapping("/holiday/{month}/{day}")
-    public ResponseEntity<Boolean> isHoliday(@PathVariable int month, @PathVariable int day)
-        throws IOException, JAXBException {
+    public ResponseEntity<Boolean> isHoliday(@PathVariable int month, @PathVariable int day) {
         return ResponseEntity
             .ok(holidayService.isHoliday(LocalDate.now().withMonth(month).withDayOfMonth(day)));
     }

@@ -4,7 +4,7 @@ import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
 import com.johnny.cs.domain.HolidayResponse;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +16,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URLEncoder;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Log4j2
+@Slf4j
 @Service
 public class HolidayService {
 
@@ -31,26 +34,94 @@ public class HolidayService {
     @Value("${open.api.endpoint}")
     private String endPoint;
 
-    public boolean isHoliday(LocalDate target) throws IOException, JAXBException {
+    public boolean isHoliday(LocalDate target) {
+        if (isWeekEnd(target)) {
+            return true;
+        }
+
+        HttpResponse response = Objects.requireNonNull(getHttpResponse(target), "공공데이터 api 통신 장애 발");
+        String xml = getResponse(response);
+        log.info(xml);
+
+        JAXBContext jaxbContext = Objects.requireNonNull(getContext(), "JAXBContext 실패");
+        Unmarshaller unmarshaller = Objects.requireNonNull(getUnmarshaller(jaxbContext), "Unmarshaller 생성 실패");
+
+        HolidayResponse holidays = Objects.requireNonNull(parseXml(xml, unmarshaller), "Xml parse 실패");
+
+        return isHoliday(target, holidays);
+    }
+
+    private boolean isWeekEnd(LocalDate target){
+        DayOfWeek day = DayOfWeek.of(target.get(ChronoField.DAY_OF_WEEK));
+        return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
+    }
+
+    private JAXBContext getContext(){
+        JAXBContext context = null;
+        try {
+            context = JAXBContext.newInstance(HolidayResponse.class);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        return context;
+    }
+
+    private Unmarshaller getUnmarshaller(JAXBContext jaxbContext) {
+        Unmarshaller unmarshaller = null;
+        try {
+            unmarshaller = jaxbContext.createUnmarshaller();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        return unmarshaller;
+    }
+
+    private  HolidayResponse parseXml(String xml, Unmarshaller unmarshaller) {
+        HolidayResponse response = null;
+        try (StringReader reader = new StringReader(xml)) {
+            response = (HolidayResponse) unmarshaller.unmarshal(reader);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+
+    private HttpResponse getHttpResponse(LocalDate target){
         HttpRequestFactory requestFactory
-            = new NetHttpTransport().createRequestFactory();
+                = new NetHttpTransport().createRequestFactory();
         String url = createUrl(target);
-        log.info(url);
+        HttpHeaders httpHeaders = createHeaders();
+        HttpRequest request;
+        HttpResponse response = null;
+        try {
+            request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
+            response = request.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+    private String getResponse(HttpResponse rawResponse){
+        String response = "";
+        try (InputStream content = rawResponse.getContent();) {
+            response = CharStreams.toString(new InputStreamReader(content));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+    private HttpHeaders createHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Content-Type", "application/json");
-        HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
-        HttpResponse rawResponse = request.execute();
-        InputStream content = rawResponse.getContent();
-        String response = CharStreams.toString(new InputStreamReader(content));
-
-        log.info(response);
-        JAXBContext jaxbContext = JAXBContext.newInstance(HolidayResponse.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-        StringReader reader = new StringReader(response);
-        HolidayResponse holidays = (HolidayResponse) unmarshaller.unmarshal(reader);
-        log.info("{}", holidays);
-        return isHoliday(target, holidays);
+        return httpHeaders;
     }
 
     private String createUrl(LocalDate target) {
@@ -67,6 +138,10 @@ public class HolidayService {
     }
 
     private boolean isHoliday(LocalDate target, HolidayResponse response) {
+        if (Objects.isNull(response.getBody().getItems().getItems())) {
+            return false;
+        }
+
         return response.getBody().getItems().getItems().stream().anyMatch(item -> {
             LocalDate parsed = LocalDate.parse(item.getLocdate(), DateTimeFormatter.ofPattern("uuuuMMdd"));
             return parsed.equals(target);
