@@ -1,5 +1,7 @@
 package com.johnny.cs.domain;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Setter
 @XmlRootElement(name = "header")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HolidayResponseHeader {
 
     @XmlElement(name = "resultCode", required = true)
