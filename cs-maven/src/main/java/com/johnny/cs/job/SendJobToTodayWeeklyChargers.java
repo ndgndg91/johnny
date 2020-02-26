@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * 당일 오전, 오후 CS 담당자에게 오전 9시에 알림.
@@ -25,7 +26,10 @@ public class SendJobToTodayWeeklyChargers implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
-            spreadSheetsService.getTodayWeeklyChargers();
+            List<String> todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
+            log.info("오늘의 담당자!!");
+            log.info("{}", todayWeeklyChargers);
+            log.info("오늘의 담당자!!");
         } catch (GeneralSecurityException | IOException | URISyntaxException e) {
             e.printStackTrace();
         }

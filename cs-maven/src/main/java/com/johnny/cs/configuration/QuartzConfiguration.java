@@ -1,6 +1,8 @@
 package com.johnny.cs.configuration;
 
 import com.johnny.cs.job.*;
+import com.johnny.cs.job.unreadmail.SendJobForUnRepliedMailOnWeekEnd;
+import com.johnny.cs.job.unreadmail.SendJobForUnRepliedMailOnWeekly;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -16,11 +18,20 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 public class QuartzConfiguration {
 
     @Bean
-    public JobDetail sendJobForUnRepliedMailAlarmDetail() {
-        return JobBuilder.newJob().ofType(SendJobForUnRepliedMailAlarm.class)
+    public JobDetail sendJobForUnRepliedMailOnWeekEndDetail() {
+        return JobBuilder.newJob().ofType(SendJobForUnRepliedMailOnWeekEnd.class)
                 .storeDurably()
-                .withIdentity("SendJobForUnRepliedMailAlarm")
-                .withDescription("LineWorks help account check unread email and unReply email")
+                .withIdentity("SendJobForUnRepliedMailOnWeekEnd")
+                .withDescription("LineWorks help account check unread email and unReply email on weekend")
+                .build();
+    }
+
+    @Bean
+    public JobDetail sendJobForUnRepliedMailOnWeeklyDetail() {
+        return JobBuilder.newJob().ofType(SendJobForUnRepliedMailOnWeekly.class)
+                .storeDurably()
+                .withIdentity("SendJobForUnRepliedMailOnWeekly")
+                .withDescription("LineWorks help account check unread email and unReply email on weekly")
                 .build();
     }
 
@@ -30,15 +41,6 @@ public class QuartzConfiguration {
                 .storeDurably()
                 .withIdentity("SendJobToChargerForCompletion")
                 .withDescription("Celebration to Completion of CS")
-                .build();
-    }
-
-    @Bean
-    public JobDetail sendJobToHolidayChargerDetail() {
-        return JobBuilder.newJob().ofType(SendJobToHolidayCharger.class)
-                .storeDurably()
-                .withIdentity("SendJobToHolidayCharger")
-                .withDescription("Check for holiday charger")
                 .build();
     }
 
@@ -70,10 +72,50 @@ public class QuartzConfiguration {
     }
 
     @Bean
-    public CronTriggerFactoryBean unRepliedMailAlarmTrigger(JobDetail sendJobForUnRepliedMailAlarmDetail) {
+    public CronTriggerFactoryBean unRepliedMailOnWeekEndTrigger(JobDetail sendJobForUnRepliedMailOnWeekEndDetail) {
         CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobForUnRepliedMailAlarmDetail);
-        trigger.setCronExpression("0 * * ? * *");
+        trigger.setJobDetail(sendJobForUnRepliedMailOnWeekEndDetail);
+        trigger.setCronExpression("5 * * * * ? *");
+        return trigger;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean unRepliedMailOnWeeklyTrigger(JobDetail sendJobForUnRepliedMailOnWeeklyDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobForUnRepliedMailOnWeeklyDetail);
+        trigger.setCronExpression("10 * * * * ? *");
+        return trigger;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean chargerForCompletionTrigger(JobDetail sendJobToChargerForCompletionDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToChargerForCompletionDetail);
+        trigger.setCronExpression("15 * * * * ? *");
+        return trigger;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean nighttimeChargerTrigger(JobDetail sendJobToNighttimeChargerDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToNighttimeChargerDetail);
+        trigger.setCronExpression("20 * * * * ? *");
+        return trigger;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean todayWeeklyChargersTrigger(JobDetail sendJobToTodayWeeklyChargersDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToTodayWeeklyChargersDetail);
+        trigger.setCronExpression("25 * * * * ? *");
+        return trigger;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean tomorrowChargersTrigger(JobDetail sendJobToTomorrowChargersDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToTomorrowChargersDetail);
+        trigger.setCronExpression("30 * * * * ? *");
         return trigger;
     }
 

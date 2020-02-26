@@ -82,7 +82,6 @@ public class SpreadSheetsService {
             .get(spreadSheetId, getRange())
             .execute();
 
-        log.info("{}", response);
         return response.getValues();
     }
 
@@ -142,12 +141,7 @@ public class SpreadSheetsService {
 
     private List<String> getChargersByDay(List<List<Object>> values, String targetDay, String dayAfterTargetDay) {
         List<Object> rowContainingTomorrow = getRowContainingDay(values, targetDay);
-        List<String> tomorrowChargers = extractDayChargers(rowContainingTomorrow, targetDay, dayAfterTargetDay);
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        log.info("{}", tomorrowChargers);
-        log.info("{}", tomorrowChargers.size());
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        return tomorrowChargers;
+        return extractDayChargers(rowContainingTomorrow, targetDay, dayAfterTargetDay);
     }
 
     private List<String> extractDayChargers(List<Object> rowContainingToday, String targetDay, String dayAfterTargetDay) {
@@ -188,11 +182,9 @@ public class SpreadSheetsService {
     }
 
     private List<Object> getRowContainingDay(List<List<Object>> values, String day){
-        log.info("{}", day);
         List<Object> todayRow = new ArrayList<>();
         for (List<Object> row : values) {
             if (row.contains(day)) {
-                log.info("들어왔어!");
                 todayRow = row;
                 break;
             }

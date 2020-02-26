@@ -1,4 +1,4 @@
-package com.johnny.cs.job;
+package com.johnny.cs.job.unreadmail;
 
 import com.johnny.cs.service.HolidayService;
 import com.johnny.cs.service.LineWorksService;
@@ -10,15 +10,13 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 /**
  * 답장 보내지 않은 메일이 30분 지났을 때 알림 ( 야간, 휴일 )
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SendJobForUnRepliedMailAlarm implements Job {
+public class SendJobForUnRepliedMailOnWeekEnd implements Job {
 
     private final SpreadSheetsService spreadSheetsService;
 
@@ -28,11 +26,6 @@ public class SendJobForUnRepliedMailAlarm implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        if (holidayService.isHoliday(LocalDate.now())) {
-            log.info("오늘은 공휴일!");
-            return;
-        }
-
-        log.info("오늘은 공휴일이 아니군!");
+        log.info("평일 야간 CS 답장하지 않는 메일 체킹");
     }
 }
