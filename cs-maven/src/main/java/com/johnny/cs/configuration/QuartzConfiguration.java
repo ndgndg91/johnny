@@ -71,51 +71,52 @@ public class QuartzConfiguration {
                 .build();
     }
 
-    @Bean
-    public CronTriggerFactoryBean unRepliedMailOnWeekEndTrigger(JobDetail sendJobForUnRepliedMailOnWeekEndDetail) {
-        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobForUnRepliedMailOnWeekEndDetail);
-        trigger.setCronExpression("5 * * * * ? *");
-        return trigger;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean unRepliedMailOnWeeklyTrigger(JobDetail sendJobForUnRepliedMailOnWeeklyDetail) {
-        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobForUnRepliedMailOnWeeklyDetail);
-        trigger.setCronExpression("10 * * * * ? *");
-        return trigger;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean chargerForCompletionTrigger(JobDetail sendJobToChargerForCompletionDetail) {
-        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobToChargerForCompletionDetail);
-        trigger.setCronExpression("15 * * * * ? *");
-        return trigger;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean nighttimeChargerTrigger(JobDetail sendJobToNighttimeChargerDetail) {
-        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobToNighttimeChargerDetail);
-        trigger.setCronExpression("20 * * * * ? *");
-        return trigger;
-    }
-
-    @Bean
-    public CronTriggerFactoryBean todayWeeklyChargersTrigger(JobDetail sendJobToTodayWeeklyChargersDetail) {
-        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobToTodayWeeklyChargersDetail);
-        trigger.setCronExpression("25 * * * * ? *");
-        return trigger;
-    }
+//    @Bean
+//    public CronTriggerFactoryBean unRepliedMailOnWeekEndTrigger(JobDetail sendJobForUnRepliedMailOnWeekEndDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobForUnRepliedMailOnWeekEndDetail);
+//        trigger.setCronExpression("5 * * * * ? *");
+//        return trigger;
+//    }
+//
+//    @Bean
+//    public CronTriggerFactoryBean unRepliedMailOnWeeklyTrigger(JobDetail sendJobForUnRepliedMailOnWeeklyDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobForUnRepliedMailOnWeeklyDetail);
+//        trigger.setCronExpression("10 * * * * ? *");
+//        return trigger;
+//    }
+//
+//    @Bean
+//    public CronTriggerFactoryBean chargerForCompletionTrigger(JobDetail sendJobToChargerForCompletionDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobToChargerForCompletionDetail);
+//        trigger.setCronExpression("15 * * * * ? *");
+//        return trigger;
+//    }
+//
+//    @Bean
+//    public CronTriggerFactoryBean nighttimeChargerTrigger(JobDetail sendJobToNighttimeChargerDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobToNighttimeChargerDetail);
+//        trigger.setCronExpression("20 * * * * ? *");
+//        return trigger;
+//    }
+//
+//    @Bean
+//    public CronTriggerFactoryBean todayWeeklyChargersTrigger(JobDetail sendJobToTodayWeeklyChargersDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobToTodayWeeklyChargersDetail);
+//        trigger.setCronExpression("25 * * * * ? *");
+//        return trigger;
+//    }
 
     @Bean
     public CronTriggerFactoryBean tomorrowChargersTrigger(JobDetail sendJobToTomorrowChargersDetail) {
         CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
         trigger.setJobDetail(sendJobToTomorrowChargersDetail);
         trigger.setCronExpression("30 * * * * ? *");
+//        55 59 21 * * ? *
         return trigger;
     }
 

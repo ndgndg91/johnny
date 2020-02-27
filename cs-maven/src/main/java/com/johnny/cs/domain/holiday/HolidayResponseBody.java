@@ -1,4 +1,4 @@
-package com.johnny.cs.domain;
+package com.johnny.cs.domain.holiday;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,26 +9,23 @@ import lombok.Setter;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@Getter
 @Setter
-@XmlRootElement(name = "item")
+@XmlRootElement(name = "body")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Item {
+public class HolidayResponseBody {
 
-    @XmlElement(name = "dateKind", required = true)
-    private String dateKind;
+    @Getter
+    @XmlElement(name = "items", required = true)
+    private Items items;
 
-    @XmlElement(name = "dateName", required = true)
-    private String dateName;
+    @XmlElement(name = "numOfRows", required = true)
+    private int numOfRows;
 
-    @XmlElement(name = "isHoliday", required = true)
-    private String isHoliday;
+    @XmlElement(name = "pageNo", required = true)
+    private int pageNo;
 
-    @XmlElement(name = "locdate", required = true)
-    private String locdate;
-
-    @XmlElement(name = "seq", required = true)
-    private int seq;
+    @XmlElement(name = "totalCount", required = true)
+    private int totalCount;
 
     @Override
     public String toString() {

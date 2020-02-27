@@ -1,4 +1,4 @@
-package com.johnny.cs.domain;
+package com.johnny.cs.domain.holiday;
 
 
 import java.util.List;

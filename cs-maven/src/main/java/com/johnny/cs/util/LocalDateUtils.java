@@ -18,4 +18,8 @@ public final class LocalDateUtils {
         return String.valueOf(LocalDate.now().plusDays(2).getDayOfMonth());
     }
 
+    public static LocalDate getTomorrow() {
+        return LocalDate.now().plusDays(1);
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.johnny.cs.domain;
+package com.johnny.cs.domain.holiday;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

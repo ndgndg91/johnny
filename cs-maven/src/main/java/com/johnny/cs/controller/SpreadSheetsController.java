@@ -1,5 +1,6 @@
 package com.johnny.cs.controller;
 
+import com.johnny.cs.domain.charger.TomorrowCharger;
 import com.johnny.cs.service.HolidayService;
 import com.johnny.cs.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;
@@ -7,13 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class SpreadSheetsController {
     }
 
     @GetMapping("/get/todayWeeklyChargers")
-    public ResponseEntity<List<String>> getTodayChargers() throws IOException, GeneralSecurityException, URISyntaxException {
+    public ResponseEntity<List<String>> getTodayChargers() {
         List<String> todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
         if (CollectionUtils.isEmpty(todayWeeklyChargers)) {
             return ResponseEntity.noContent().build();
@@ -43,9 +41,9 @@ public class SpreadSheetsController {
     }
 
     @GetMapping("/get/tomorrowChargers")
-    public ResponseEntity<List<String>> getTomorrowChargers() throws GeneralSecurityException, IOException, URISyntaxException {
-        List<String> tomorrowChargers = spreadSheetsService.getTomorrowChargers();
-        if (CollectionUtils.isEmpty(tomorrowChargers)) {
+    public ResponseEntity<TomorrowCharger> getTomorrowChargers() {
+        TomorrowCharger tomorrowChargers = spreadSheetsService.getTomorrowChargers();
+        if (ObjectUtils.isEmpty(tomorrowChargers)) {
             return ResponseEntity.noContent().build();
         }
 
@@ -54,8 +52,7 @@ public class SpreadSheetsController {
     }
 
     @GetMapping("/get/{month}/{day}")
-    public ResponseEntity<List<String>> getChargersOfSpecificDay(@PathVariable byte month, @PathVariable byte day)
-        throws GeneralSecurityException, IOException, URISyntaxException {
+    public ResponseEntity<List<String>> getChargersOfSpecificDay(@PathVariable byte month, @PathVariable byte day) {
         List<String> specificDayChargers = spreadSheetsService.getSpecificDayChargers(month, day);
         if (CollectionUtils.isEmpty(specificDayChargers)) {
             return ResponseEntity.noContent().build();

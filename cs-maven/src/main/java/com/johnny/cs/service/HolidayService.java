@@ -3,7 +3,7 @@ package com.johnny.cs.service;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
-import com.johnny.cs.domain.HolidayResponse;
+import com.johnny.cs.domain.holiday.HolidayResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

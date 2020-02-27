@@ -1,4 +1,4 @@
-package com.johnny.cs.domain;
+package com.johnny.cs.domain.charger;
 
 import java.time.LocalDate;
 import java.util.Arrays;

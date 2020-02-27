@@ -8,9 +8,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 
 /**
@@ -25,13 +22,9 @@ public class SendJobToTodayWeeklyChargers implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            List<String> todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
-            log.info("오늘의 담당자!!");
-            log.info("{}", todayWeeklyChargers);
-            log.info("오늘의 담당자!!");
-        } catch (GeneralSecurityException | IOException | URISyntaxException e) {
-            e.printStackTrace();
-        }
+        List<String> todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
+        log.info("오늘의 담당자!!");
+        log.info("{}", todayWeeklyChargers);
+        log.info("오늘의 담당자!!");
     }
 }
