@@ -21,9 +21,9 @@ public class AwsSQSService {
 
     private static final String EMPTY = "";
 
-    @Value("${aws.test.credential.accessKeyId}")
+    @Value("${aws.credential.accessKeyId}")
     private String accessKey;
-    @Value("${aws.test.credential.secretKey}")
+    @Value("${aws.credential.secretKey}")
     private String secretKey;
 
     private AmazonSQS build() {
@@ -38,57 +38,60 @@ public class AwsSQSService {
     }
 
     public String getQueueUrl(String queueName) {
-        AmazonSQS SQSClient = build();
+        AmazonSQS amazonSQS = build();
         try{
             CreateQueueRequest createQueueRequest = new CreateQueueRequest(queueName);
-            return SQSClient.createQueue(createQueueRequest).getQueueUrl();
+            return amazonSQS.createQueue(createQueueRequest).getQueueUrl();
         } catch (AmazonServiceException ase) {
-            log.info("Caught an AmazonServiceException, which means your request made it " +
-                "to Amazon SQS, but was rejected with an error response for some reason.");
-            log.info("Error Message:    " + ase.getMessage());
-            log.info("HTTP Status Code: " + ase.getStatusCode());
-            log.info("AWS Error Code:   " + ase.getErrorCode());
-            log.info("Error Type:       " + ase.getErrorType());
-            log.info("Request ID:       " + ase.getRequestId());
+            handleAmazonServiceException(ase);
         } catch (AmazonClientException ace) {
-            log.info("Caught an AmazonClientException, which means the client encountered " +
-                "a serious internal problem while trying to communicate with SQS, such as not " +
-                "being able to access the network.");
-            log.info("Error Message: " + ace.getMessage());
+            handleAmazonClientException(ace);
         }
 
         return EMPTY;
     }
 
-    public String sendMessage(String queueName, String message) {
-        AmazonSQS SQSClient = build();
+    public boolean sendMessage(String queueName, String message) {
+        AmazonSQS amazonSQS = build();
         String queueUrl = getQueueUrl(queueName);
 
-        log.info("===========================================");
-        log.info("Getting Started with Amazon SQS");
-        log.info("===========================================\n");
+        printStartSendProcess();
 
-        String res = null;
+        boolean res = false;
         try {
             // Send a message
             log.info("Sending a message to MyQueue.\n");
-            SQSClient.sendMessage(new SendMessageRequest(queueUrl, message));
-            res = "OK";
+            amazonSQS.sendMessage(new SendMessageRequest(queueUrl, message));
+            res = true;
         } catch (AmazonServiceException ase) {
-            log.info("Caught an AmazonServiceException, which means your request made it " +
-                "to Amazon SQS, but was rejected with an error response for some reason.");
-            log.info("Error Message:    " + ase.getMessage());
-            log.info("HTTP Status Code: " + ase.getStatusCode());
-            log.info("AWS Error Code:   " + ase.getErrorCode());
-            log.info("Error Type:       " + ase.getErrorType());
-            log.info("Request ID:       " + ase.getRequestId());
+            handleAmazonServiceException(ase);
         } catch (AmazonClientException ace) {
-            log.info("Caught an AmazonClientException, which means the client encountered " +
-                "a serious internal problem while trying to communicate with SQS, such as not " +
-                "being able to access the network.");
-            log.info("Error Message: " + ace.getMessage());
+            handleAmazonClientException(ace);
         }
 
         return res;
+    }
+
+    private void printStartSendProcess(){
+        log.info("===========================================");
+        log.info("Getting Started with Amazon SQS");
+        log.info("===========================================\n");
+    }
+
+    private void handleAmazonServiceException(AmazonServiceException ase) {
+        log.info("Caught an AmazonServiceException, which means your request made it " +
+            "to Amazon SQS, but was rejected with an error response for some reason.");
+        log.info("Error Message:    " + ase.getMessage());
+        log.info("HTTP Status Code: " + ase.getStatusCode());
+        log.info("AWS Error Code:   " + ase.getErrorCode());
+        log.info("Error Type:       " + ase.getErrorType());
+        log.info("Request ID:       " + ase.getRequestId());
+    }
+
+    private void handleAmazonClientException(AmazonClientException ace) {
+        log.info("Caught an AmazonClientException, which means the client encountered " +
+            "a serious internal problem while trying to communicate with SQS, such as not " +
+            "being able to access the network.");
+        log.info("Error Message: " + ace.getMessage());
     }
 }

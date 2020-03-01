@@ -1,4 +1,4 @@
-package com.johnny.cs.core.domain;
+package com.johnny.cs.core.domain.person;
 
 import lombok.*;
 

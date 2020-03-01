@@ -1,6 +1,6 @@
 package com.johnny.cs.alarm.domain;
 
-public enum  template {
+public enum Template {
 
     SEND_TOMORROW_WEEKLY_CHARGER("group_six_cs_1", "쟈니_주간_하루 전", "#{CS_NAME}님, 내일은 주간 CS 담당일입니다. 잊지 마세요!(굿)"),
     SEND_TODAY_WEEKLY_CHARGER("group_six_cs_2", "쟈니_주간_당일 정시", "#{CS_NAME}님, 오늘은 주간 CS 담당일입니다. 잘 부탁드려요!(씨익)"),
@@ -15,7 +15,7 @@ public enum  template {
     private String templateName;
     private String pattern;
 
-    template(String templateCode, String templateName, String pattern) {
+    Template(String templateCode, String templateName, String pattern) {
         this.templateCode = templateCode;
         this.templateName = templateName;
         this.pattern = pattern;

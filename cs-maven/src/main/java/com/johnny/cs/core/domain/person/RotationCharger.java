@@ -1,7 +1,6 @@
-package com.johnny.cs.core.domain;
+package com.johnny.cs.core.domain.person;
 
 public class RotationCharger extends Charger {
-
     public RotationCharger(String name) {
         super.name = name;
     }

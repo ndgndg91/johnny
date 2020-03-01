@@ -1,6 +1,6 @@
 package com.johnny.cs.spreadsheet.controller;
 
-import com.johnny.cs.core.domain.TomorrowCharger;
+import com.johnny.cs.core.domain.person.TomorrowCharger;
 import com.johnny.cs.date.service.HolidayService;
 import com.johnny.cs.spreadsheet.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;

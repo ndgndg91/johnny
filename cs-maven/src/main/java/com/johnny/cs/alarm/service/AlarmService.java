@@ -1,6 +1,6 @@
 package com.johnny.cs.alarm.service;
 
-import com.johnny.cs.core.domain.Charger;
+import com.johnny.cs.core.domain.person.Charger;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

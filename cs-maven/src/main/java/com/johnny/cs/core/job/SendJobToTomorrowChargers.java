@@ -1,11 +1,11 @@
 package com.johnny.cs.core.job;
 
-import com.johnny.cs.core.domain.Charger;
-import com.johnny.cs.core.domain.HolidayCharger;
-import com.johnny.cs.core.domain.NighttimeCharger;
-import com.johnny.cs.core.domain.RotationCharger;
-import com.johnny.cs.core.domain.TomorrowCharger;
-import com.johnny.cs.core.domain.WeeklyCharger;
+import com.johnny.cs.core.domain.person.Charger;
+import com.johnny.cs.core.domain.person.HolidayCharger;
+import com.johnny.cs.core.domain.person.NighttimeCharger;
+import com.johnny.cs.core.domain.person.RotationCharger;
+import com.johnny.cs.core.domain.person.TomorrowCharger;
+import com.johnny.cs.core.domain.person.WeeklyCharger;
 import com.johnny.cs.spreadsheet.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
