@@ -1,11 +1,7 @@
 spring:
   application:
     name: johnny
-  autoconfigure:
-    exclude:
-#      - org.springframework.cloud.aws.autoconfigure.messaging.MessagingAutoConfiguration
-#      - org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration
-#      - org.springframework.cloud.aws.autoconfigure.context.ContextRegionProviderAutoConfiguration
+
 google:
   test:
     service:

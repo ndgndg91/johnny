@@ -1,5 +1,6 @@
 package com.johnny.cs;
 
+import com.johnny.cs.core.aws.AwsSQS;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
