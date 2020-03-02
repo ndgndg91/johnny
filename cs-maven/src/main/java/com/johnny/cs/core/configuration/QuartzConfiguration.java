@@ -123,11 +123,11 @@ public class QuartzConfiguration {
         return trigger;
     }
 
-    @Bean
-    public Scheduler unRepliedMailAlarmScheduler(SchedulerFactoryBean factory)
-            throws SchedulerException {
-        Scheduler scheduler = factory.getScheduler();
-        scheduler.start();
-        return scheduler;
-    }
+//    @Bean
+//    public Scheduler unRepliedMailAlarmScheduler(SchedulerFactoryBean factory)
+//            throws SchedulerException {
+//        Scheduler scheduler = factory.getScheduler();
+//        scheduler.start();
+//        return scheduler;
+//    }
 }

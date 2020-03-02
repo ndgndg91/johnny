@@ -1,26 +1,27 @@
 package com.johnny.cs.spreadsheet.service;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.johnny.cs.alarm.domain.Template;
 import com.johnny.cs.core.domain.person.CSTeam;
 import com.johnny.cs.core.domain.person.HolidayCharger;
 import com.johnny.cs.core.domain.person.NighttimeCharger;
 import com.johnny.cs.core.domain.person.RotationCharger;
 import com.johnny.cs.core.domain.person.TomorrowCharger;
 import com.johnny.cs.core.domain.person.WeeklyCharger;
+import com.johnny.cs.core.util.PhoneUtils;
 import com.johnny.cs.date.util.LocalDateUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -52,13 +53,16 @@ public class SpreadSheetsService {
         List<WeeklyCharger> weeklyChargers = chargers.subList(0, 3)
                 .stream()
                 .filter(CSTeam::isNotCSTeam)
-                .map(WeeklyCharger::new)
+                .map(c -> new WeeklyCharger(c, PhoneUtils.getPhoneBook().get(c), Template.SEND_TOMORROW_WEEKLY_CHARGER))
                 .collect(Collectors.toUnmodifiableList());
-        RotationCharger rotationCharger = new RotationCharger(chargers.get(3));
-        NighttimeCharger nighttimeCharger = new NighttimeCharger(chargers.get(4));
-        log.info("{}", weeklyChargers);
-        log.info("{}", rotationCharger);
-        log.info("{}", nighttimeCharger);
+        RotationCharger rotationCharger = new RotationCharger(chargers.get(3), PhoneUtils
+            .getPhoneBook()
+            .get(chargers.get(3)),
+            Template.SEND_TOMORROW_WEEKLY_CHARGER);
+        NighttimeCharger nighttimeCharger = new NighttimeCharger(chargers.get(4), PhoneUtils
+            .getPhoneBook()
+            .get(chargers.get(4)),
+            Template.SEND_TODAY_NIGHTTIME_CHARGER);
         return TomorrowCharger.builder()
                 .weeklyChargers(weeklyChargers)
                 .rotationCharger(rotationCharger)

@@ -44,7 +44,7 @@ public class CredentialService {
 
     public List<List<Object>> getValues() {
         Sheets sheets = getCSChargersSheets();
-        ValueRange response = getValueRange(sheets);
+        ValueRange response = Objects.requireNonNull(getValueRange(sheets));
         return response.getValues();
     }
 
