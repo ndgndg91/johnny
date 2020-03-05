@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+/**
+ * 답장 보내지 않은 메일이 30분 지났을 때 알림 ( 평일 )
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

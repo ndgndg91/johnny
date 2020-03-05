@@ -1,27 +1,27 @@
 package com.johnny.cs.spreadsheet.service;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.johnny.cs.alarm.domain.Template;
-import com.johnny.cs.core.domain.person.CSTeam;
-import com.johnny.cs.core.domain.person.HolidayCharger;
-import com.johnny.cs.core.domain.person.NighttimeCharger;
-import com.johnny.cs.core.domain.person.RotationCharger;
-import com.johnny.cs.core.domain.person.TomorrowCharger;
-import com.johnny.cs.core.domain.person.WeeklyCharger;
+import com.johnny.cs.core.domain.person.*;
+import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
+import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
+import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
+import com.johnny.cs.core.domain.person.tomorrow.TomorrowCharger;
 import com.johnny.cs.core.util.PhoneUtils;
 import com.johnny.cs.date.util.LocalDateUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -30,39 +30,75 @@ public class SpreadSheetsService {
 
     private final CredentialService credentialService;
 
-
-    public List<String> getTodayWeeklyChargers() {
+    public TodayHolidayCharger getTodayHolidayCharger() {
         List<List<Object>> values = credentialService.getValues();
-        return getTodayChargers(values)
-                .stream()
+        List<String> chargers = getTodayChargers(values);
+        return discriminateTodayHolidayCharger(chargers);
+    }
+
+    private TodayHolidayCharger discriminateTodayHolidayCharger(List<String> chargers){
+        String name = chargers.get(0);
+        return TodayHolidayCharger.is(new HolidayCharger(name,
+                PhoneUtils.getPhoneBook().get(name),
+                Template.SEND_TODAY_HOLIDAY_CHARGER));
+    }
+
+    public TodayNighttimeCharger getTodayNighttimeChargers() {
+        List<List<Object>> values = credentialService.getValues();
+        List<String> chargers = getTodayChargers(values);
+        return discriminateTodayNighttimeCharger(chargers);
+    }
+
+    private TodayNighttimeCharger discriminateTodayNighttimeCharger(List<String> chargers) {
+        String name = chargers.get(4);
+        return TodayNighttimeCharger.is(new NighttimeCharger(name,
+                PhoneUtils.getPhoneBook().get(name),
+                Template.SEND_TODAY_NIGHTTIME_CHARGER));
+    }
+
+    public TodayWeeklyCharger getTodayWeeklyChargers() {
+        List<List<Object>> values = credentialService.getValues();
+        List<String> chargers = getTodayChargers(values);
+        return discriminateTodayWeeklyChargers(chargers);
+    }
+
+    private TodayWeeklyCharger discriminateTodayWeeklyChargers(List<String> chargers){
+        List<WeeklyCharger> weeklyChargers = chargers.stream()
                 .filter(CSTeam::isNotCSTeam)
-                .collect(collectingAndThen(toList(), ImmutableList::copyOf));
+                .map(c -> new WeeklyCharger(c,
+                        PhoneUtils.getPhoneBook().get(c),
+                        Template.SEND_TODAY_WEEKLY_CHARGER))
+                .collect(Collectors.toUnmodifiableList());
+        return TodayWeeklyCharger.is(weeklyChargers);
     }
 
     public TomorrowCharger getTomorrowChargers() {
         List<List<Object>> values = credentialService.getValues();
         List<String> chargers = getTomorrowChargers(values);
-        return discriminateChargers(chargers);
+        return discriminateTomorrowChargers(chargers);
     }
 
-    private TomorrowCharger discriminateChargers(List<String> chargers) {
+    private TomorrowCharger discriminateTomorrowChargers(List<String> chargers) {
         if (isOneCharger(chargers)) {
-            return new TomorrowCharger(new HolidayCharger(chargers.get(0)));
+            return new TomorrowCharger(new HolidayCharger(chargers.get(0),
+                    PhoneUtils.getPhoneBook().get(chargers.get(0)),
+                    Template.SEND_TOMORROW_HOLIDAY_CHARGER)
+            );
         }
 
         List<WeeklyCharger> weeklyChargers = chargers.subList(0, 3)
                 .stream()
                 .filter(CSTeam::isNotCSTeam)
-                .map(c -> new WeeklyCharger(c, PhoneUtils.getPhoneBook().get(c), Template.SEND_TOMORROW_WEEKLY_CHARGER))
+                .map(c -> new WeeklyCharger(c,
+                        PhoneUtils.getPhoneBook().get(c),
+                        Template.SEND_TOMORROW_WEEKLY_CHARGER))
                 .collect(Collectors.toUnmodifiableList());
-        RotationCharger rotationCharger = new RotationCharger(chargers.get(3), PhoneUtils
-            .getPhoneBook()
-            .get(chargers.get(3)),
-            Template.SEND_TOMORROW_WEEKLY_CHARGER);
-        NighttimeCharger nighttimeCharger = new NighttimeCharger(chargers.get(4), PhoneUtils
-            .getPhoneBook()
-            .get(chargers.get(4)),
-            Template.SEND_TODAY_NIGHTTIME_CHARGER);
+        RotationCharger rotationCharger = new RotationCharger(chargers.get(3),
+                PhoneUtils.getPhoneBook().get(chargers.get(3)),
+                Template.SEND_TOMORROW_WEEKLY_CHARGER);
+        NighttimeCharger nighttimeCharger = new NighttimeCharger(chargers.get(4),
+                PhoneUtils.getPhoneBook().get(chargers.get(4)),
+                Template.SEND_TOMORROW_NIGHTTIME_CHARGER);
         return TomorrowCharger.builder()
                 .weeklyChargers(weeklyChargers)
                 .rotationCharger(rotationCharger)
@@ -154,5 +190,4 @@ public class SpreadSheetsService {
 
         return todayRow;
     }
-
 }

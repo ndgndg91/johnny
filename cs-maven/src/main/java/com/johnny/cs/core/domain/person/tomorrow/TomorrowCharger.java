@@ -1,7 +1,9 @@
-package com.johnny.cs.core.domain.person;
+package com.johnny.cs.core.domain.person.tomorrow;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.johnny.cs.core.domain.person.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

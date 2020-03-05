@@ -1,20 +1,20 @@
 package com.johnny.cs.core.configuration;
 
 import com.johnny.cs.core.job.SendJobToChargerForCompletion;
-import com.johnny.cs.core.job.SendJobToNighttimeCharger;
-import com.johnny.cs.core.job.SendJobToTodayWeeklyChargers;
-import com.johnny.cs.core.job.SendJobToTomorrowChargers;
+import com.johnny.cs.core.job.today.SendJobToTodayHolidayCharger;
+import com.johnny.cs.core.job.today.SendJobToTodayNighttimeCharger;
+import com.johnny.cs.core.job.today.SendJobToTodayWeeklyChargers;
+import com.johnny.cs.core.job.tomorrow.SendJobToTomorrowChargers;
 import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMailOnWeekEnd;
 import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMailOnWeekly;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Slf4j
 @Configuration
@@ -48,10 +48,19 @@ public class QuartzConfiguration {
     }
 
     @Bean
-    public JobDetail sendJobToNighttimeChargerDetail() {
-        return JobBuilder.newJob().ofType(SendJobToNighttimeCharger.class)
+    public JobDetail sendJobToTodayHolidayChargerDetail(){
+        return JobBuilder.newJob().ofType(SendJobToTodayHolidayCharger.class)
                 .storeDurably()
-                .withIdentity("SendJobToNighttimeCharger")
+                .withIdentity("SendJobToTodayHolidayCharger")
+                .withDescription("Check for Holiday charger")
+                .build();
+    }
+
+    @Bean
+    public JobDetail sendJobToTodayNighttimeChargerDetail() {
+        return JobBuilder.newJob().ofType(SendJobToTodayNighttimeCharger.class)
+                .storeDurably()
+                .withIdentity("SendJobToTodayNighttimeCharger")
                 .withDescription("Check for NightTime charger")
                 .build();
     }
@@ -78,7 +87,7 @@ public class QuartzConfiguration {
 //    public CronTriggerFactoryBean unRepliedMailOnWeekEndTrigger(JobDetail sendJobForUnRepliedMailOnWeekEndDetail) {
 //        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
 //        trigger.setJobDetail(sendJobForUnRepliedMailOnWeekEndDetail);
-//        trigger.setCronExpression("5 * * * * ? *");
+//        trigger.setCronExpression("* 0/1 9-23 ? * SAT,SUN *");
 //        return trigger;
 //    }
 //
@@ -86,7 +95,7 @@ public class QuartzConfiguration {
 //    public CronTriggerFactoryBean unRepliedMailOnWeeklyTrigger(JobDetail sendJobForUnRepliedMailOnWeeklyDetail) {
 //        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
 //        trigger.setJobDetail(sendJobForUnRepliedMailOnWeeklyDetail);
-//        trigger.setCronExpression("10 * * * * ? *");
+//        trigger.setCronExpression("* 0/1 18-23 ? * MON,TUE,WED,THU,FRI *");
 //        return trigger;
 //    }
 //
@@ -97,37 +106,42 @@ public class QuartzConfiguration {
 //        trigger.setCronExpression("15 * * * * ? *");
 //        return trigger;
 //    }
-//
+
+    /**
+     * 절취선 위의 주석은 미완성
+     * *******************
+     * 아래 주석은 완성
+     */
+
 //    @Bean
-//    public CronTriggerFactoryBean nighttimeChargerTrigger(JobDetail sendJobToNighttimeChargerDetail) {
+//    public CronTriggerFactoryBean todayHolidayChargerTrigger(JobDetail sendJobToTodayHolidayChargerDetail) {
 //        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobToNighttimeChargerDetail);
-//        trigger.setCronExpression("20 * * * * ? *");
+//        trigger.setJobDetail(sendJobToTodayHolidayChargerDetail);
+//        trigger.setCronExpression("59 54 08 ? * * *");
 //        return trigger;
 //    }
-//
+
+//    @Bean
+//    public CronTriggerFactoryBean todayNighttimeChargerTrigger(JobDetail sendJobToTodayNighttimeChargerDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobToTodayNighttimeChargerDetail);
+//        trigger.setCronExpression("59 54 17 ? * * *");
+//        return trigger;
+//    }
+
 //    @Bean
 //    public CronTriggerFactoryBean todayWeeklyChargersTrigger(JobDetail sendJobToTodayWeeklyChargersDetail) {
 //        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
 //        trigger.setJobDetail(sendJobToTodayWeeklyChargersDetail);
-//        trigger.setCronExpression("25 * * * * ? *");
+//        trigger.setCronExpression("59 59 08 ? * * *");
 //        return trigger;
 //    }
 
-    @Bean
-    public CronTriggerFactoryBean tomorrowChargersTrigger(JobDetail sendJobToTomorrowChargersDetail) {
-        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-        trigger.setJobDetail(sendJobToTomorrowChargersDetail);
-        trigger.setCronExpression("30 * * * * ? *");
-//        55 59 21 * * ? *
-        return trigger;
-    }
-
 //    @Bean
-//    public Scheduler unRepliedMailAlarmScheduler(SchedulerFactoryBean factory)
-//            throws SchedulerException {
-//        Scheduler scheduler = factory.getScheduler();
-//        scheduler.start();
-//        return scheduler;
+//    public CronTriggerFactoryBean tomorrowChargersTrigger(JobDetail sendJobToTomorrowChargersDetail) {
+//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+//        trigger.setJobDetail(sendJobToTomorrowChargersDetail);
+//        trigger.setCronExpression("59 59 21 ? * * *");
+//        return trigger;
 //    }
 }

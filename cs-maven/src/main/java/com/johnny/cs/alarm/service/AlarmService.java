@@ -13,13 +13,18 @@ import com.johnny.cs.alarm.domain.Template;
 import com.johnny.cs.alarm.util.BizmUtils;
 import com.johnny.cs.core.domain.person.Charger;
 import com.johnny.cs.core.domain.person.HolidayCharger;
-import com.johnny.cs.core.domain.person.TomorrowCharger;
+import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
+import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
+import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
+import com.johnny.cs.core.domain.person.tomorrow.TomorrowCharger;
 import com.johnny.cs.core.util.JacksonUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
+
+import com.johnny.cs.core.util.PhoneUtils;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,13 +35,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class AlarmService {
 
+    private static final String IMMEDIATELY = "00000000000000";
+    private static final String APPLICATION_JSON = "application/json";
+
     @Value("${kakao.profileKey}")
     private String profileKey;
 
     @Value("${kakao.endPoint}")
     private String endPoint;
 
-    @Value("${kakao.bizmUserId")
+    @Value("${kakao.bizmUserId}")
     private String bizmUserId;
 
     @Value("${kakao.bizmUserKey}")
@@ -44,6 +52,18 @@ public class AlarmService {
 
     @Value("${kakao.phone}")
     private String sendPhone;
+
+    public void sendAlarm(TodayHolidayCharger todayHolidayCharger) {
+        sendAlarm(todayHolidayCharger.getHolidayCharger());
+    }
+
+    public void sendAlarm(TodayNighttimeCharger todayNighttimeCharger) {
+        sendAlarm(todayNighttimeCharger.getNighttimeCharger());
+    }
+
+    public void sendAlarm(TodayWeeklyCharger todayWeeklyCharger) {
+        sendAlarms(todayWeeklyCharger.getWeeklyChargers());
+    }
 
     public void sendAlarm(TomorrowCharger tomorrowChargers) {
         if (tomorrowChargers.isTomorrowHoliday()) {
@@ -76,21 +96,20 @@ public class AlarmService {
             .msgId(BizmUtils.generateKey())
             .profileKey(profileKey)
             .templateCode(charger.getTemplate().getTemplateCode())
-            .receiverNum("82" + charger.getPhone())
+            .receiverNum(charger.getPhone())
             .message(charger.getTemplate().getPattern())
-            .reservedTime("00000000000000")
+            .reservedTime(IMMEDIATELY)
             .build();
         bizm.reviseChargerName();
-        return JacksonUtils.toJson(bizm);
+        return "[" + JacksonUtils.toJson(bizm) + "]";
     }
 
     private void send (String body) {
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Content-Type", "application/json");
-        httpHeaders.set("Accept", "application/json");
-        httpHeaders.set("userId", bizmUserId);
-        httpHeaders.set("userKey", bizmUserKey);
+        httpHeaders.setContentType(APPLICATION_JSON);
+        httpHeaders.setAccept(APPLICATION_JSON);
+        httpHeaders.set("userid", bizmUserId);
 
         HttpRequest request = Objects.requireNonNull(createRequest(requestFactory, httpHeaders, body));
         HttpResponse response = Objects.requireNonNull(getResponse(request));
@@ -103,7 +122,7 @@ public class AlarmService {
         HttpRequest request = null;
         try {
             request = requestFactory.buildPostRequest(new GenericUrl(endPoint), ByteArrayContent
-                .fromString("application/json", body)).setHeaders(httpHeaders);
+                .fromString(APPLICATION_JSON, body)).setHeaders(httpHeaders);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -134,7 +153,8 @@ public class AlarmService {
     }
 
     public void sendToMe() {
-        String bizmBody = getBizmBody(new Charger("동길", "01072255198", Template.SEND_TOMORROW_WEEKLY_CHARGER));
+        String bizmBody = getBizmBody(new Charger("동길", PhoneUtils.getPhoneBook().get("동길"), Template.SEND_TOMORROW_WEEKLY_CHARGER));
+        log.info(bizmBody);
         send(bizmBody);
     }
 }

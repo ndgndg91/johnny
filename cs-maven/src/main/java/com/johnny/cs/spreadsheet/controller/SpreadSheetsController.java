@@ -1,6 +1,7 @@
 package com.johnny.cs.spreadsheet.controller;
 
-import com.johnny.cs.core.domain.person.TomorrowCharger;
+import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
+import com.johnny.cs.core.domain.person.tomorrow.TomorrowCharger;
 import com.johnny.cs.date.service.HolidayService;
 import com.johnny.cs.spreadsheet.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -30,9 +32,9 @@ public class SpreadSheetsController {
     }
 
     @GetMapping("/get/todayWeeklyChargers")
-    public ResponseEntity<List<String>> getTodayChargers() {
-        List<String> todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
-        if (CollectionUtils.isEmpty(todayWeeklyChargers)) {
+    public ResponseEntity<TodayWeeklyCharger> getTodayChargers() {
+        TodayWeeklyCharger todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
+        if (Objects.isNull(todayWeeklyChargers)) {
             return ResponseEntity.noContent().build();
         }
 

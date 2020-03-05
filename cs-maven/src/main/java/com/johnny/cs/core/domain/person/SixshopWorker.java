@@ -11,18 +11,18 @@ public enum SixshopWorker {
     LJS(new Charger("재석", "821091658447"), true),
     AHG(new Charger("홍근", "821050949036"), true),
     HDH(new Charger("동호", "821091461117"), true),
-    NDG(new Charger("동길", "82072255198"), true),
-    LKS(new Charger("기승", "82024991180"), true),
-    LJH(new Charger("지혜", "82094967434"), true),
-    YNR(new Charger("나래", "82099117319"), true),
-    HEB(new Charger("은비", "82090633308"), true),
-    LSB(new Charger("석봉", "82067899444"), true),
-    LHE(new Charger("하은", "82089196507"), true),
-    JSW(new Charger("선우", "82033350548"), true),
-    CWS(new Charger("우석", "82083121478"), true),
+    NDG(new Charger("동길", "821072255198"), true),
+    LKS(new Charger("기승", "821024991180"), true),
+    LJH(new Charger("지혜", "821094967434"), true),
+    YNR(new Charger("나래", "821099117319"), true),
+    HEB(new Charger("은비", "821090633308"), true),
+    LSB(new Charger("석봉", "821067899444"), true),
+    LHE(new Charger("하은", "821089196507"), true),
+    JSW(new Charger("선우", "821033350548"), true),
+    CWS(new Charger("우석", "821083121478"), true),
     SYJ(new Charger("영지", "4044012013"), false),
-    KYJ(new Charger("용진", "82041797900"), true),
-    KSJ(new Charger("선진", "82093605445"), true);
+    KYJ(new Charger("용진", "821041797900"), true),
+    KSJ(new Charger("선진", "821093605445"), true);
 
     private Charger charger;
     private boolean isDomestic;
