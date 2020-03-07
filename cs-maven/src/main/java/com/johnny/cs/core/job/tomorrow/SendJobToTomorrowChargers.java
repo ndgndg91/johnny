@@ -27,5 +27,6 @@ public class SendJobToTomorrowChargers implements Job {
         TomorrowCharger tomorrowChargers = spreadSheetsService.getTomorrowChargers();
         log.info("{}", tomorrowChargers);
         alarmService.sendAlarm(tomorrowChargers);
+        log.info("job 완료");
     }
 }

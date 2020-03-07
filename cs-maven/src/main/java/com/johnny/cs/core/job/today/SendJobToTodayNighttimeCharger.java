@@ -35,5 +35,6 @@ public class SendJobToTodayNighttimeCharger implements Job {
 
         TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers();
         alarmService.sendAlarm(todayNighttimeChargers);
+        log.info("job 완료");
     }
 }

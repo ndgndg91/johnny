@@ -35,5 +35,6 @@ public class SendJobToTodayHolidayCharger implements Job {
 
         TodayHolidayCharger todayHolidayCharger = spreadSheetsService.getTodayHolidayCharger();
         alarmService.sendAlarm(todayHolidayCharger);
+        log.info("job 완료");
     }
 }

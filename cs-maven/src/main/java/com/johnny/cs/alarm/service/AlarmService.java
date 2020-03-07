@@ -55,14 +55,17 @@ public class AlarmService {
 
     public void sendAlarm(TodayHolidayCharger todayHolidayCharger) {
         sendAlarm(todayHolidayCharger.getHolidayCharger());
+        log.info("오늘 휴일 담당자에게 알람 발신 완료!");
     }
 
     public void sendAlarm(TodayNighttimeCharger todayNighttimeCharger) {
         sendAlarm(todayNighttimeCharger.getNighttimeCharger());
+        log.info("오늘 야간 담당자에게 알람 발신 완료!");
     }
 
     public void sendAlarm(TodayWeeklyCharger todayWeeklyCharger) {
         sendAlarms(todayWeeklyCharger.getWeeklyChargers());
+        log.info("오늘 주간 담당자들에게 알람 발신 완료!");
     }
 
     public void sendAlarm(TomorrowCharger tomorrowChargers) {
@@ -74,11 +77,13 @@ public class AlarmService {
 
         List<Charger> weekDayChargers = tomorrowChargers.getWeekDayChargers();
         sendAlarms(weekDayChargers);
+        log.info("내일 담당자들에게 알람 발신 완료!");
     }
 
     public void sendAlarm(Charger charger) {
         String bizmBody = getBizmBody(charger);
         log.info(bizmBody);
+        send(bizmBody);
     }
 
     public <C extends Charger> void sendAlarms(List<C> chargers) {

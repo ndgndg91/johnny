@@ -36,6 +36,6 @@ public class SendJobToTodayWeeklyChargers implements Job {
         TodayWeeklyCharger todayWeeklyChargers = spreadSheetsService.getTodayWeeklyChargers();
         log.info("{}", todayWeeklyChargers);
         alarmService.sendAlarm(todayWeeklyChargers);
-
+        log.info("job 완료");
     }
 }
