@@ -3,6 +3,8 @@ package com.johnny.cs.core.domain.person.tomorrow;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.johnny.cs.core.domain.person.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +17,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TomorrowCharger {
     private boolean isHoliday;
     @Getter
@@ -35,6 +38,7 @@ public class TomorrowCharger {
         return isHoliday;
     }
 
+    @JsonIgnore
     public List<Charger> getWeekDayChargers(){
         List<Charger> weekDayChargers = new ArrayList<>(weeklyChargers);
         weekDayChargers.add(rotationCharger);
