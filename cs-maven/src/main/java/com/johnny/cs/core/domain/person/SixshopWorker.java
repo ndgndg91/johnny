@@ -22,7 +22,30 @@ public enum SixshopWorker {
     CWS(new Charger("우석", "821083121478"), true),
     SYJ(new Charger("영지", "4044012013"), false),
     KYJ(new Charger("용진", "821041797900"), true),
-    KSJ(new Charger("선진", "821093605445"), true);
+    KSJ(new Charger("선진", "821093605445"), true),
+
+    LSM_HOLIDAY(new Charger("상민(휴)", "821091710956"), true),
+    CUC_HOLIDAY(new Charger("의철(휴)", "821094981469"), true),
+    SYM_HOLIDAY(new Charger("윤모(휴)", "821033850233"), true),
+    KKN_HOLIDAY(new Charger("경남(휴)", "821073678167"), true),
+    SJY_HOLIDAY(new Charger("주영(휴)", "821041420285"), true),
+    LSJ_HOLIDAY(new Charger("승현(휴)", "821083610420"), true),
+    LSH_HOLIDAY(new Charger("승환(휴)", "821043317026"), true),
+    LJS_HOLIDAY(new Charger("재석(휴)", "821091658447"), true),
+    AHG_HOLIDAY(new Charger("홍근(휴)", "821050949036"), true),
+    HDH_HOLIDAY(new Charger("동호(휴)", "821091461117"), true),
+    NDG_HOLIDAY(new Charger("동길(휴)", "821072255198"), true),
+    LKS_HOLIDAY(new Charger("기승(휴)", "821024991180"), true),
+    LJH_HOLIDAY(new Charger("지혜(휴)", "821094967434"), true),
+    YNR_HOLIDAY(new Charger("나래(휴)", "821099117319"), true),
+    HEB_HOLIDAY(new Charger("은비(휴)", "821090633308"), true),
+    LSB_HOLIDAY(new Charger("석봉(휴)", "821067899444"), true),
+    LHE_HOLIDAY(new Charger("하은(휴)", "821089196507"), true),
+    JSW_HOLIDAY(new Charger("선우(휴)", "821033350548"), true),
+    CWS_HOLIDAY(new Charger("우석(휴)", "821083121478"), true),
+    SYJ_HOLIDAY(new Charger("영지(휴)", "4044012013"), false),
+    KYJ_HOLIDAY(new Charger("용진(휴)", "821041797900"), true),
+    KSJ_HOLIDAY(new Charger("선진(휴)", "821093605445"), true);
 
     private Charger charger;
     private boolean isDomestic;
