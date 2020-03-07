@@ -38,7 +38,6 @@ public class SpreadSheetsController {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("{}", todayWeeklyChargers);
         return ResponseEntity.ok(todayWeeklyChargers);
     }
 
@@ -49,7 +48,6 @@ public class SpreadSheetsController {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("{}", tomorrowChargers);
         return ResponseEntity.ok(tomorrowChargers);
     }
 
@@ -60,7 +58,6 @@ public class SpreadSheetsController {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("{}", specificDayChargers);
         return ResponseEntity.ok(specificDayChargers);
     }
 

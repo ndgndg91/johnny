@@ -10,8 +10,6 @@ import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMailOnWeekly;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
@@ -110,38 +108,37 @@ public class QuartzConfiguration {
     /**
      * 절취선 위의 주석은 미완성
      * *******************
-     * 아래 주석은 완성
      */
 
-//    @Bean
-//    public CronTriggerFactoryBean todayHolidayChargerTrigger(JobDetail sendJobToTodayHolidayChargerDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobToTodayHolidayChargerDetail);
-//        trigger.setCronExpression("59 54 08 ? * * *");
-//        return trigger;
-//    }
+    @Bean
+    public CronTriggerFactoryBean todayHolidayChargerTrigger(JobDetail sendJobToTodayHolidayChargerDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToTodayHolidayChargerDetail);
+        trigger.setCronExpression("59 54 08 ? * * *");
+        return trigger;
+    }
 
-//    @Bean
-//    public CronTriggerFactoryBean todayNighttimeChargerTrigger(JobDetail sendJobToTodayNighttimeChargerDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobToTodayNighttimeChargerDetail);
-//        trigger.setCronExpression("59 54 17 ? * * *");
-//        return trigger;
-//    }
+    @Bean
+    public CronTriggerFactoryBean todayNighttimeChargerTrigger(JobDetail sendJobToTodayNighttimeChargerDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToTodayNighttimeChargerDetail);
+        trigger.setCronExpression("59 54 17 ? * * *");
+        return trigger;
+    }
 
-//    @Bean
-//    public CronTriggerFactoryBean todayWeeklyChargersTrigger(JobDetail sendJobToTodayWeeklyChargersDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobToTodayWeeklyChargersDetail);
-//        trigger.setCronExpression("59 59 08 ? * * *");
-//        return trigger;
-//    }
+    @Bean
+    public CronTriggerFactoryBean todayWeeklyChargersTrigger(JobDetail sendJobToTodayWeeklyChargersDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToTodayWeeklyChargersDetail);
+        trigger.setCronExpression("59 59 08 ? * * *");
+        return trigger;
+    }
 
-//    @Bean
-//    public CronTriggerFactoryBean tomorrowChargersTrigger(JobDetail sendJobToTomorrowChargersDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobToTomorrowChargersDetail);
-//        trigger.setCronExpression("59 59 21 ? * * *");
-//        return trigger;
-//    }
+    @Bean
+    public CronTriggerFactoryBean tomorrowChargersTrigger(JobDetail sendJobToTomorrowChargersDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToTomorrowChargersDetail);
+        trigger.setCronExpression("59 59 21 ? * * *");
+        return trigger;
+    }
 }

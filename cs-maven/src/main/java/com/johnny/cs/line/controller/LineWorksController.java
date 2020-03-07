@@ -23,8 +23,7 @@ public class LineWorksController {
     private final LineWorksService lineWorksService;
 
     @GetMapping("/line/sixshop")
-    public ResponseEntity<Void> lineXSixShop(AuthorizationCodeRequest request) throws IOException {
-       log.info("{}", request);
+    public ResponseEntity<Void> lineXSixShop(final AuthorizationCodeRequest request) throws IOException {
        if ( ! request.getState().equals(state)) {
            return ResponseEntity.badRequest().build();
        }
