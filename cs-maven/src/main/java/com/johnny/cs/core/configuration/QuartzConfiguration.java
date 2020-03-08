@@ -146,7 +146,7 @@ public class QuartzConfiguration {
     }
 
     @Bean
-    public Scheduler unRepliedMailAlarmScheduler(SchedulerFactoryBean factory)
+    public Scheduler alarmScheduler(SchedulerFactoryBean factory)
             throws SchedulerException {
         Scheduler scheduler = factory.getScheduler();
         scheduler.start();

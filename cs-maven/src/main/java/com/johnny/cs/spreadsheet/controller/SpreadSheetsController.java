@@ -1,6 +1,5 @@
 package com.johnny.cs.spreadsheet.controller;
 
-import com.johnny.cs.alarm.service.AlarmService;
 import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
 import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
 import com.johnny.cs.core.domain.person.tomorrow.TomorrowCharger;
@@ -56,6 +55,7 @@ public class SpreadSheetsController {
             return ResponseEntity.noContent().build();
         }
 
+        log.info("{}", tomorrowChargers.getWeekDayChargers());
         return ResponseEntity.ok(tomorrowChargers);
     }
 

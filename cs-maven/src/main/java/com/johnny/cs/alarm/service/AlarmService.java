@@ -18,6 +18,7 @@ import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
 import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
 import com.johnny.cs.core.domain.person.tomorrow.TomorrowCharger;
 import com.johnny.cs.core.util.JacksonUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -94,22 +95,22 @@ public class AlarmService {
         }
     }
 
-    private String getBizmBody(Charger charger){
+    private String getBizmBody(Charger charger) {
         Bizm bizm = Bizm.builder()
-            .sendPhone(sendPhone)
-            .name(charger.getName())
-            .msgId(BizmUtils.generateKey())
-            .profileKey(profileKey)
-            .templateCode(charger.getTemplate().getTemplateCode())
-            .receiverNum(charger.getPhone())
-            .message(charger.getTemplate().getPattern())
-            .reservedTime(IMMEDIATELY)
-            .build();
+                .sendPhone(sendPhone)
+                .name(charger.getName())
+                .msgId(BizmUtils.generateKey())
+                .profileKey(profileKey)
+                .templateCode(charger.getTemplate().getTemplateCode())
+                .receiverNum(charger.getPhone())
+                .message(charger.getTemplate().getPattern())
+                .reservedTime(IMMEDIATELY)
+                .build();
         bizm.reviseChargerName();
         return "[" + JacksonUtils.toJson(bizm) + "]";
     }
 
-    private void send (String body) {
+    private void send(String body) {
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(APPLICATION_JSON);
@@ -127,7 +128,7 @@ public class AlarmService {
         HttpRequest request = null;
         try {
             request = requestFactory.buildPostRequest(new GenericUrl(endPoint), ByteArrayContent
-                .fromString(APPLICATION_JSON, body)).setHeaders(httpHeaders);
+                    .fromString(APPLICATION_JSON, body)).setHeaders(httpHeaders);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +136,7 @@ public class AlarmService {
         return request;
     }
 
-    private HttpResponse getResponse(HttpRequest request){
+    private HttpResponse getResponse(HttpRequest request) {
         HttpResponse response = null;
         try {
             response = request.execute();
@@ -146,7 +147,7 @@ public class AlarmService {
         return response;
     }
 
-    private String convert(HttpResponse response){
+    private String convert(HttpResponse response) {
         String result = "";
         try (InputStream content = response.getContent();) {
             result = CharStreams.toString(new InputStreamReader(content));
@@ -158,7 +159,7 @@ public class AlarmService {
     }
 
     public void sendToMe() {
-        String bizmBody = getBizmBody(new Charger("동길", PhoneUtils.getPhoneBook().get("동길"), Template.SEND_TOMORROW_WEEKLY_CHARGER));
+        String bizmBody = getBizmBody(new Charger("동길", PhoneUtils.getPhoneBook().get("동길"), Template.SEND_TO_HO_BOT));
         log.info(bizmBody);
         send(bizmBody);
     }

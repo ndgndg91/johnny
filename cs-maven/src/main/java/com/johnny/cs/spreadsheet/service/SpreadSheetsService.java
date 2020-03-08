@@ -86,18 +86,20 @@ public class SpreadSheetsService {
             );
         }
 
-        List<WeeklyCharger> weeklyChargers = chargers.subList(0, 3)
+        int totalChargersCount = chargers.size();
+        List<WeeklyCharger> weeklyChargers = chargers.subList(0, totalChargersCount-2)
                 .stream()
                 .filter(CSTeam::isNotCSTeam)
                 .map(c -> new WeeklyCharger(c,
                         PhoneUtils.getPhoneBook().get(c),
                         Template.SEND_TOMORROW_WEEKLY_CHARGER))
                 .collect(Collectors.toUnmodifiableList());
-        RotationCharger rotationCharger = new RotationCharger(chargers.get(3),
-                PhoneUtils.getPhoneBook().get(chargers.get(3)),
+        RotationCharger rotationCharger = new RotationCharger(chargers.get(totalChargersCount-2),
+                PhoneUtils.getPhoneBook().get(chargers.get(totalChargersCount-2)),
                 Template.SEND_TOMORROW_WEEKLY_CHARGER);
-        NighttimeCharger nighttimeCharger = new NighttimeCharger(chargers.get(4),
-                PhoneUtils.getPhoneBook().get(chargers.get(4)),
+
+        NighttimeCharger nighttimeCharger = new NighttimeCharger(chargers.get(totalChargersCount-1),
+                PhoneUtils.getPhoneBook().get(chargers.get(totalChargersCount-1)),
                 Template.SEND_TOMORROW_NIGHTTIME_CHARGER);
         return TomorrowCharger.builder()
                 .weeklyChargers(weeklyChargers)

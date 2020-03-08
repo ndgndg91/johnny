@@ -18,6 +18,7 @@ public final class BizmUtils {
                 .append(now.getHour())
                 .append(now.getMinute())
                 .append(now.getSecond())
+                .append(now.getNano())
                 .toString();
     }
 
