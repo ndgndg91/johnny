@@ -10,9 +10,12 @@ import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMailOnWeekly;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Slf4j
 @Configuration
@@ -140,5 +143,13 @@ public class QuartzConfiguration {
         trigger.setJobDetail(sendJobToTomorrowChargersDetail);
         trigger.setCronExpression("59 59 21 ? * * *");
         return trigger;
+    }
+
+    @Bean
+    public Scheduler unRepliedMailAlarmScheduler(SchedulerFactoryBean factory)
+            throws SchedulerException {
+        Scheduler scheduler = factory.getScheduler();
+        scheduler.start();
+        return scheduler;
     }
 }

@@ -19,8 +19,8 @@ google:
       email: johnny-spread-sheet@johnny-267812.iam.gserviceaccount.com
   key:
     file:
-      location: /home/ec2-user/johnny-267812-b424a3495c1d.p12
-#      location: classpath:johnny-267812-b424a3495c1d.p12
+#      location: /home/ec2-user/johnny-267812-b424a3495c1d.p12
+      location: classpath:johnny-267812-b424a3495c1d.p12
   sheet:
     id: 18blkUm0JEAHCFWLutoSde-d0pMje-iIXJ72Iv5FFZ4Q
     range: A:AI
