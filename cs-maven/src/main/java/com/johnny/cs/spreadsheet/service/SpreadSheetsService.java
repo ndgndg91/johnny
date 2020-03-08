@@ -63,6 +63,7 @@ public class SpreadSheetsService {
     }
 
     private TodayWeeklyCharger discriminateTodayWeeklyChargers(List<String> chargers){
+        removeNighttimeCharger(chargers);
         List<WeeklyCharger> weeklyChargers = chargers.stream()
                 .filter(CSTeam::isNotCSTeam)
                 .map(c -> new WeeklyCharger(c,
@@ -70,6 +71,10 @@ public class SpreadSheetsService {
                         Template.SEND_TODAY_WEEKLY_CHARGER))
                 .collect(Collectors.toUnmodifiableList());
         return TodayWeeklyCharger.is(weeklyChargers);
+    }
+
+    private void removeNighttimeCharger(List<String> chargers){
+        chargers.remove(chargers.size() - 1);
     }
 
     public TomorrowCharger getTomorrowChargers() {
@@ -121,8 +126,8 @@ public class SpreadSheetsService {
     }
 
     private List<String> getTodayChargers(List<List<Object>> values) {
-        String today = LocalDateUtils.getTodayString();
-        String tomorrow = LocalDateUtils.getTomorrowString();
+        String today = LocalDateUtils.getTomorrowString();
+        String tomorrow = LocalDateUtils.getDayAfterTomorrowString();
         return getChargersByDay(values, today, tomorrow);
     }
 
