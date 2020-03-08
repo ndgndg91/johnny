@@ -8,5 +8,6 @@ Google spread sheet API
 
 LineWorks mail API 정보들
 - line.yml
+- sixshop.yml
 
 인증에 관련된 정보가 있는 파일들은  NAS 에 저장해서 관리 중
