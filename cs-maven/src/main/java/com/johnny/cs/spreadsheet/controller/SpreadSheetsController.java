@@ -1,6 +1,7 @@
 package com.johnny.cs.spreadsheet.controller;
 
 import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
+import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
 import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
 import com.johnny.cs.core.domain.person.tomorrow.TomorrowCharger;
 import com.johnny.cs.date.service.HolidayService;
@@ -44,8 +45,10 @@ public class SpreadSheetsController {
 
     @GetMapping("/get/todayHolidayCharger")
     public ResponseEntity<TodayHolidayCharger> getTodayHolidayCharger(){
-        TodayHolidayCharger todayHolidayCharger = spreadSheetsService.getTodayHolidayCharger();
-        return ResponseEntity.ok(todayHolidayCharger);
+        if (holidayService.isHoliday(LocalDate.now())) {
+            return ResponseEntity.ok(spreadSheetsService.getTodayHolidayCharger());
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/get/tomorrowChargers")
@@ -57,6 +60,13 @@ public class SpreadSheetsController {
 
         log.info("{}", tomorrowChargers.getWeekDayChargers());
         return ResponseEntity.ok(tomorrowChargers);
+    }
+
+    @GetMapping("/get/todayNighttimeCharger")
+    public ResponseEntity<TodayNighttimeCharger> getTodayNighttimeCharger(){
+        TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers();
+        log.info("{}", todayNighttimeChargers);
+        return ResponseEntity.ok(todayNighttimeChargers);
     }
 
     @GetMapping("/get/{month}/{day}")

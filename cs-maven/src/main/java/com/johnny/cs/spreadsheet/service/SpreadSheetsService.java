@@ -50,7 +50,7 @@ public class SpreadSheetsService {
     }
 
     private TodayNighttimeCharger discriminateTodayNighttimeCharger(List<String> chargers) {
-        String name = chargers.get(4);
+        String name = chargers.get(chargers.size()-1);
         return TodayNighttimeCharger.is(new NighttimeCharger(name,
                 PhoneUtils.getPhoneBook().get(name),
                 Template.SEND_TODAY_NIGHTTIME_CHARGER));
@@ -126,8 +126,8 @@ public class SpreadSheetsService {
     }
 
     private List<String> getTodayChargers(List<List<Object>> values) {
-        String today = LocalDateUtils.getTomorrowString();
-        String tomorrow = LocalDateUtils.getDayAfterTomorrowString();
+        String today = LocalDateUtils.getTodayString();
+        String tomorrow = LocalDateUtils.getTomorrowString();
         return getChargersByDay(values, today, tomorrow);
     }
 
