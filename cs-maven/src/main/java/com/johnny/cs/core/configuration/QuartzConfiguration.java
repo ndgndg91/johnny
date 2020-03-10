@@ -1,6 +1,7 @@
 package com.johnny.cs.core.configuration;
 
 import com.johnny.cs.core.job.SendJobToChargerForCompletion;
+import com.johnny.cs.core.job.TestJob;
 import com.johnny.cs.core.job.today.SendJobToTodayHolidayCharger;
 import com.johnny.cs.core.job.today.SendJobToTodayNighttimeCharger;
 import com.johnny.cs.core.job.today.SendJobToTodayWeeklyChargers;
@@ -106,7 +107,28 @@ public class QuartzConfiguration {
 //        trigger.setJobDetail(sendJobToChargerForCompletionDetail);
 //        trigger.setCronExpression("15 * * * * ? *");
 //        return trigger;
-//    }
+//    }료
+
+
+    /**
+     * 테스트 잡
+     */
+    @Bean
+    public JobDetail testJobDetail(){
+        return JobBuilder.newJob().ofType(TestJob.class)
+                .storeDurably()
+                .withIdentity("test Job")
+                .withDescription("모든 메서드 테스트")
+                .build();
+    }
+
+    @Bean
+    public CronTriggerFactoryBean testTrigger(JobDetail testJobDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(testJobDetail);
+        trigger.setCronExpression("0 0/10 * 1/1 * ? *");
+        return trigger;
+    }
 
     /**
      * 절취선 위의 주석은 미완성

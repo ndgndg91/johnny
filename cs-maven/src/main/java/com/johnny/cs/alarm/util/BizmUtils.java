@@ -1,25 +1,23 @@
 package com.johnny.cs.alarm.util;
 
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public final class BizmUtils {
 
+    private static final Set<String> keys = new HashSet<>();
+
     private BizmUtils(){}
 
-    public static String generateKey(){
-        LocalDateTime now = LocalDateTime.now();
-        return generateKey(now);
-    }
+    public static String generateKey() {
+        String johnnyKey;
+        do {
+            johnnyKey = UUID.randomUUID().toString().substring(0,20);
+        } while (keys.contains(johnnyKey));
 
-    private static String generateKey(LocalDateTime now) {
-        return new StringBuilder(now.getYear())
-                .append(now.getMonth())
-                .append(now.getDayOfMonth())
-                .append(now.getHour())
-                .append(now.getMinute())
-                .append(now.getSecond())
-                .append(now.getNano())
-                .toString();
+        keys.add(johnnyKey);
+        return johnnyKey;
     }
 
 }
