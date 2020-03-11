@@ -5,7 +5,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
 import com.johnny.cs.line.domain.request.AccessTokenRequest;
 import com.johnny.cs.line.domain.response.AccessCodeResponse;
-import com.johnny.cs.line.domain.response.MailListResponse;
+import com.johnny.cs.line.domain.response.mailfolder.MailData;
+import com.johnny.cs.line.domain.response.mailfolder.MailListResponse;
 import com.johnny.cs.core.util.JacksonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -48,9 +50,11 @@ public class LineWorksService {
     private String mailListUrl;
     @Value("${api.mailList.folderSN}")
     private String receiveFolder;
-    @Value(("${api.mailList.sortField}"))
+    @Value("${api.mailList.sortField}")
     private String sortStandard;
 
+    @Value("${api.readMail.url}")
+    private String readMailUrl;
 
     public void getAccessCode() throws InterruptedException {
         log.info(authUrl);
@@ -72,6 +76,7 @@ public class LineWorksService {
             btn.click();
         }
         driver.close();
+        log.info("이유가 뭐지?");
     }
 
     public AccessCodeResponse getAccessToken(String code) throws IOException {
@@ -98,23 +103,38 @@ public class LineWorksService {
         log.info(accessToken);
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
         String url = createUrl();
+        HttpHeaders httpHeaders = getHeaders(accessToken);
+        List<MailData> mails = getMailData(requestFactory, url, httpHeaders);
+
+        for (MailData mail : mails) {
+//            mail.getMailSN()
+        }
+    }
+
+    private List<MailData> getMailData(HttpRequestFactory requestFactory, String url, HttpHeaders httpHeaders) throws IOException {
+        HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
+        HttpResponse response = request.execute();
+        try(InputStream content = response.getContent()){
+            String result = CharStreams.toString(new InputStreamReader(content));
+            log.info(result);
+            MailListResponse mails = JacksonUtils.getMapper().readValue(result, MailListResponse.class);
+            log.info("{}", mails);
+            return mails.getMailData();
+        }
+    }
+
+    private HttpHeaders getHeaders(String accessToken){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("consumerKey", serviceApiConsumerKey);
         httpHeaders.set("Authorization", "Bearer " + accessToken);
-
-        HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
-        HttpResponse response = request.execute();
-        InputStream content = response.getContent();
-        String result = CharStreams.toString(new InputStreamReader(content));
-        log.info(result);
-        MailListResponse mails = JacksonUtils.getMapper().readValue(result, MailListResponse.class);
-        log.info("{}", mails);
+        return httpHeaders;
     }
 
     private String createUrl(){
         StringBuilder urlBuilder = new StringBuilder(mailListUrl);
         urlBuilder.append("?").append(URLEncoder.encode("folderSN", UTF_8)).append("=").append(receiveFolder);
         urlBuilder.append("&").append(URLEncoder.encode("sortField", UTF_8)).append("=").append(sortStandard);
+        urlBuilder.append("&").append(URLEncoder.encode("pageSize", UTF_8)).append("=").append(URLEncoder.encode("10", UTF_8));
         return urlBuilder.toString();
     }
 }

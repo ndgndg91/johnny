@@ -1,4 +1,4 @@
-package com.johnny.cs.line.domain.response;
+package com.johnny.cs.line.domain.response.mailfolder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
