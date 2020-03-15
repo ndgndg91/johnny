@@ -24,6 +24,10 @@ google:
   sheet:
     id: 18blkUm0JEAHCFWLutoSde-d0pMje-iIXJ72Iv5FFZ4Q
     range: A:AI
+  chrome:
+    driver:
+      path: "src/main/resources/chromedriver"
+#      path: "/usr/bin/chromedriver"
 
 open:
   api:

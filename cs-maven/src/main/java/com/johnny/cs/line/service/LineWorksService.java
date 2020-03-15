@@ -56,9 +56,12 @@ public class LineWorksService {
     @Value("${api.readMail.url}")
     private String readMailUrl;
 
+    @Value("${google.chrome.driver.path}")
+    private String chromeDriverPath;
+
     public void getAccessCode() throws InterruptedException {
         log.info(authUrl);
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver");
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         WebDriver driver = new ChromeDriver();
         Thread.sleep(500);
         driver.get(authUrl);
