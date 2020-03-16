@@ -20,5 +20,4 @@ public final class MailListResponse {
     private String folderName;
     private int totalCount;
     private int listCount;
-
 }

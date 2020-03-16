@@ -1,4 +1,4 @@
-package com.johnny.cs.line.domain.response.mailfolder;
+package com.johnny.cs.line.domain.response.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class From {
+public final class To {
     private String name;
     private String email;
 }

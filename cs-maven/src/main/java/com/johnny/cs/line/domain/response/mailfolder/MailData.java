@@ -1,6 +1,8 @@
 package com.johnny.cs.line.domain.response.mailfolder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.johnny.cs.line.domain.response.common.From;
+import com.johnny.cs.line.domain.response.common.To;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

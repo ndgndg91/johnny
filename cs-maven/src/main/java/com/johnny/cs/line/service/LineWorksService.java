@@ -8,6 +8,7 @@ import com.johnny.cs.line.domain.response.AccessCodeResponse;
 import com.johnny.cs.line.domain.response.mailfolder.MailData;
 import com.johnny.cs.line.domain.response.mailfolder.MailListResponse;
 import com.johnny.cs.core.util.JacksonUtils;
+import com.johnny.cs.line.domain.response.mailread.ReadMailResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -52,6 +53,8 @@ public class LineWorksService {
     private String receiveFolder;
     @Value("${api.mailList.sortField}")
     private String sortStandard;
+
+    private static final String PAGE_SIZE = "10";
 
     @Value("${api.readMail.url}")
     private String readMailUrl;
@@ -105,12 +108,18 @@ public class LineWorksService {
     public void testApi(String accessToken) throws IOException {
         log.info(accessToken);
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
-        String url = createUrl();
+        String url = createGetFolderUrl();
         HttpHeaders httpHeaders = getHeaders(accessToken);
         List<MailData> mails = getMailData(requestFactory, url, httpHeaders);
 
+        int idx = 0;
         for (MailData mail : mails) {
-//            mail.getMailSN()
+            String getMailUrl = createGetMailUrl(mail.getMailSN());
+            ReadMailResponse mailResponse = getReadMail(requestFactory, getMailUrl, httpHeaders);
+            log.info("{}", idx);
+            log.info("{}", mailResponse);
+            log.info("답장 여부 : {}", mailResponse.getMailInfo().whatIsStatus());
+            idx++;
         }
     }
 
@@ -126,6 +135,18 @@ public class LineWorksService {
         }
     }
 
+    private ReadMailResponse getReadMail(HttpRequestFactory requestFactory, String url, HttpHeaders httpHeaders) throws IOException {
+        HttpRequest request = requestFactory.buildGetRequest(new GenericUrl(url)).setHeaders(httpHeaders);
+        HttpResponse response = request.execute();
+        try (InputStream content = response.getContent()) {
+            String result = CharStreams.toString(new InputStreamReader(content));
+//            log.info(result);
+            ReadMailResponse mail = JacksonUtils.getMapper().readValue(result, ReadMailResponse.class);
+//            log.info("{}", mail);
+            return mail;
+        }
+    }
+
     private HttpHeaders getHeaders(String accessToken){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("consumerKey", serviceApiConsumerKey);
@@ -133,11 +154,19 @@ public class LineWorksService {
         return httpHeaders;
     }
 
-    private String createUrl(){
+    private String createGetFolderUrl(){
         StringBuilder urlBuilder = new StringBuilder(mailListUrl);
         urlBuilder.append("?").append(URLEncoder.encode("folderSN", UTF_8)).append("=").append(receiveFolder);
         urlBuilder.append("&").append(URLEncoder.encode("sortField", UTF_8)).append("=").append(sortStandard);
-        urlBuilder.append("&").append(URLEncoder.encode("pageSize", UTF_8)).append("=").append(URLEncoder.encode("10", UTF_8));
+        urlBuilder.append("&").append(URLEncoder.encode("pageSize", UTF_8)).append("=").append(PAGE_SIZE);
+        return urlBuilder.toString();
+    }
+
+    private String createGetMailUrl(long mailSN){
+        StringBuilder urlBuilder = new StringBuilder(readMailUrl);
+        urlBuilder.append("?").append(URLEncoder.encode("mailSN", UTF_8))
+                .append("=")
+                .append(URLEncoder.encode(String.valueOf(mailSN), UTF_8));
         return urlBuilder.toString();
     }
 }
