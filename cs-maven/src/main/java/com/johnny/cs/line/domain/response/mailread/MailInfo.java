@@ -44,6 +44,10 @@ public final class MailInfo {
         return 0x8L == (0x8L & status);
     }
 
+    public boolean hasNotSendReplyMail(){
+        return !hasSendReplyMail();
+    }
+
     public boolean hasRelayed(){
         return 0x10L == (0x10L & status);
     }
@@ -74,51 +78,5 @@ public final class MailInfo {
 
     public boolean hasScheduledMail(){
         return 0x00400000L == (0x00400000L & status);
-    }
-
-    public String whatIsStatus(){
-        if (0x4L == (0x4L & status)) {
-            log.info("{}", status);
-            log.info("{}", 0x4L & status);
-            return "읽은 메일(현재 상태)";
-        }
-
-        if (0x8L == (0x8L & status)) {
-            return "답장을 보냄";
-        }
-
-        if (0x10L == (0x10L & status)) {
-            return "전달함";
-        }
-
-        if (0x20L == (0x20L & status)) {
-            return "중요 메일로 표시함";
-        }
-
-        if (0x100L == (0x100L & status)) {
-            return "보낸 메일임";
-        }
-
-        if (0x800L == (0x800L & status)) {
-            return "상대방이 읽음";
-        }
-
-        if (0x1000L == (0x1000L & status)) {
-            return "대용량 첨부 메일";
-        }
-
-        if (0x40000L == (0x40000L & status)) {
-            return "답장을 받은 메일";
-        }
-
-        if (0x00200000L == (0x00200000L & status)) {
-            return "내가 수신자로 설정되어 있는 메일";
-        }
-
-        if (0x00400000L == (0x00400000L & status)) {
-            return "일정 메일";
-        }
-
-        return "알 수 없음";
     }
 }

@@ -8,6 +8,7 @@ import com.johnny.cs.line.domain.response.AccessCodeResponse;
 import com.johnny.cs.line.domain.response.mailfolder.MailData;
 import com.johnny.cs.line.domain.response.mailfolder.MailListResponse;
 import com.johnny.cs.core.util.JacksonUtils;
+import com.johnny.cs.line.domain.response.mailread.MailInfo;
 import com.johnny.cs.line.domain.response.mailread.ReadMailResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -22,7 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -105,22 +108,23 @@ public class LineWorksService {
         return JacksonUtils.getMapper().readValue(result, AccessCodeResponse.class);
     }
 
-    public void testApi(String accessToken) throws IOException {
+    public Set<MailInfo> getUnRepliedMails(String accessToken) throws IOException {
         log.info(accessToken);
         HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
         String url = createGetFolderUrl();
         HttpHeaders httpHeaders = getHeaders(accessToken);
         List<MailData> mails = getMailData(requestFactory, url, httpHeaders);
 
-        int idx = 0;
+        Set<MailInfo> unRepliedMails = new HashSet<>();
         for (MailData mail : mails) {
             String getMailUrl = createGetMailUrl(mail.getMailSN());
             ReadMailResponse mailResponse = getReadMail(requestFactory, getMailUrl, httpHeaders);
-            log.info("{}", idx);
-            log.info("{}", mailResponse);
-            log.info("답장 여부 : {}", mailResponse.getMailInfo().whatIsStatus());
-            idx++;
+            if (mailResponse.getMailInfo().hasNotSendReplyMail()) {
+                unRepliedMails.add(mailResponse.getMailInfo());
+            }
         }
+
+        return unRepliedMails;
     }
 
     private List<MailData> getMailData(HttpRequestFactory requestFactory, String url, HttpHeaders httpHeaders) throws IOException {
@@ -128,9 +132,7 @@ public class LineWorksService {
         HttpResponse response = request.execute();
         try(InputStream content = response.getContent()){
             String result = CharStreams.toString(new InputStreamReader(content));
-            log.info(result);
             MailListResponse mails = JacksonUtils.getMapper().readValue(result, MailListResponse.class);
-            log.info("{}", mails);
             return mails.getMailData();
         }
     }
@@ -140,10 +142,7 @@ public class LineWorksService {
         HttpResponse response = request.execute();
         try (InputStream content = response.getContent()) {
             String result = CharStreams.toString(new InputStreamReader(content));
-//            log.info(result);
-            ReadMailResponse mail = JacksonUtils.getMapper().readValue(result, ReadMailResponse.class);
-//            log.info("{}", mail);
-            return mail;
+            return JacksonUtils.getMapper().readValue(result, ReadMailResponse.class);
         }
     }
 
@@ -167,6 +166,7 @@ public class LineWorksService {
         urlBuilder.append("?").append(URLEncoder.encode("mailSN", UTF_8))
                 .append("=")
                 .append(URLEncoder.encode(String.valueOf(mailSN), UTF_8));
+        urlBuilder.append("&").append(URLEncoder.encode("threadMail", UTF_8)).append("=").append("true");
         return urlBuilder.toString();
     }
 }
