@@ -1,5 +1,6 @@
 package com.johnny.cs.core.job.today;
 
+import com.johnny.cs.alarm.domain.Template;
 import com.johnny.cs.alarm.service.AlarmService;
 import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
 import com.johnny.cs.date.service.HolidayService;
@@ -33,7 +34,7 @@ public class SendJobToTodayNighttimeCharger implements Job {
             return;
         }
 
-        TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers();
+        TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers(Template.SEND_TODAY_NIGHTTIME_CHARGER);
         alarmService.sendAlarm(todayNighttimeChargers);
         log.info("job 완료");
     }

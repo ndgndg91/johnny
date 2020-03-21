@@ -1,5 +1,6 @@
 package com.johnny.cs.core.job;
 
+import com.johnny.cs.alarm.domain.Template;
 import com.johnny.cs.date.service.HolidayService;
 import com.johnny.cs.spreadsheet.service.SpreadSheetsService;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,9 @@ public final class TestJob implements Job {
 
         log.info("오늘은 휴일인가 ? : {}",holidayService.isHoliday(LocalDate.now()));
         log.info("내일 담당자들 : {}", spreadSheetsService.getTomorrowChargers());
-        log.info("오늘 야간 담당자 : {}", spreadSheetsService.getTodayNighttimeChargers());
+        log.info("오늘 야간 담당자 : {}", spreadSheetsService.getTodayNighttimeChargers(Template.SEND_TODAY_NIGHTTIME_CHARGER));
         log.info("오늘 주간 담당자들 : {}",spreadSheetsService.getTodayWeeklyChargers());
-        log.info("오늘 휴일 담당자 : {}", spreadSheetsService.getTodayHolidayCharger());
+        log.info("오늘 휴일 담당자 : {}", spreadSheetsService.getTodayHolidayCharger(Template.SEND_TODAY_HOLIDAY_CHARGER));
 
         log.info("=================================================================테스트 job 종료=================================================================");
     }

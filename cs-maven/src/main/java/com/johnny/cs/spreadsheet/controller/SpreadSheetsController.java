@@ -1,5 +1,6 @@
 package com.johnny.cs.spreadsheet.controller;
 
+import com.johnny.cs.alarm.domain.Template;
 import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
 import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
 import com.johnny.cs.core.domain.person.today.TodayWeeklyCharger;
@@ -46,7 +47,7 @@ public class SpreadSheetsController {
     @GetMapping("/get/todayHolidayCharger")
     public ResponseEntity<TodayHolidayCharger> getTodayHolidayCharger(){
         if (holidayService.isHoliday(LocalDate.now())) {
-            return ResponseEntity.ok(spreadSheetsService.getTodayHolidayCharger());
+            return ResponseEntity.ok(spreadSheetsService.getTodayHolidayCharger(Template.SEND_TODAY_HOLIDAY_CHARGER));
         }
         return ResponseEntity.noContent().build();
     }
@@ -64,7 +65,7 @@ public class SpreadSheetsController {
 
     @GetMapping("/get/todayNighttimeCharger")
     public ResponseEntity<TodayNighttimeCharger> getTodayNighttimeCharger(){
-        TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers();
+        TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers(Template.SEND_TODAY_NIGHTTIME_CHARGER);
         log.info("{}", todayNighttimeChargers);
         return ResponseEntity.ok(todayNighttimeChargers);
     }

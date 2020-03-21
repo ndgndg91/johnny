@@ -30,30 +30,28 @@ public class SpreadSheetsService {
 
     private final CredentialService credentialService;
 
-    public TodayHolidayCharger getTodayHolidayCharger() {
+    public TodayHolidayCharger getTodayHolidayCharger(Template template) {
         List<List<Object>> values = credentialService.getValues();
         List<String> chargers = getTodayChargers(values);
-        return discriminateTodayHolidayCharger(chargers);
+        return discriminateTodayHolidayCharger(chargers, template);
     }
 
-    private TodayHolidayCharger discriminateTodayHolidayCharger(List<String> chargers){
+    private TodayHolidayCharger discriminateTodayHolidayCharger(List<String> chargers, Template template){
         String name = chargers.get(0);
         return TodayHolidayCharger.is(new HolidayCharger(name,
-                PhoneUtils.getPhoneBook().get(name),
-                Template.SEND_TODAY_HOLIDAY_CHARGER));
+                PhoneUtils.getPhoneBook().get(name), template));
     }
 
-    public TodayNighttimeCharger getTodayNighttimeChargers() {
+    public TodayNighttimeCharger getTodayNighttimeChargers(Template template) {
         List<List<Object>> values = credentialService.getValues();
         List<String> chargers = getTodayChargers(values);
-        return discriminateTodayNighttimeCharger(chargers);
+        return discriminateTodayNighttimeCharger(chargers, template);
     }
 
-    private TodayNighttimeCharger discriminateTodayNighttimeCharger(List<String> chargers) {
+    private TodayNighttimeCharger discriminateTodayNighttimeCharger(List<String> chargers, Template template) {
         String name = chargers.get(chargers.size()-1);
         return TodayNighttimeCharger.is(new NighttimeCharger(name,
-                PhoneUtils.getPhoneBook().get(name),
-                Template.SEND_TODAY_NIGHTTIME_CHARGER));
+                PhoneUtils.getPhoneBook().get(name), template));
     }
 
     public TodayWeeklyCharger getTodayWeeklyChargers() {

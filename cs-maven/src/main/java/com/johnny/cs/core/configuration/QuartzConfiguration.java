@@ -100,17 +100,10 @@ public class QuartzConfiguration {
 //        trigger.setCronExpression("* 0/1 18-23 ? * MON,TUE,WED,THU,FRI *");
 //        return trigger;
 //    }
-//
-//    @Bean
-//    public CronTriggerFactoryBean chargerForCompletionTrigger(JobDetail sendJobToChargerForCompletionDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobToChargerForCompletionDetail);
-//        trigger.setCronExpression("15 * * * * ? *");
-//        return trigger;
-//    }료
-
 
     /**
+     * 절취선 위의 주석은 미완성
+     * *******************
      * 테스트 잡
      */
     @Bean
@@ -130,10 +123,6 @@ public class QuartzConfiguration {
         return trigger;
     }
 
-    /**
-     * 절취선 위의 주석은 미완성
-     * *******************
-     */
 
     @Bean
     public CronTriggerFactoryBean todayHolidayChargerTrigger(JobDetail sendJobToTodayHolidayChargerDetail) {
@@ -164,6 +153,14 @@ public class QuartzConfiguration {
         CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
         trigger.setJobDetail(sendJobToTomorrowChargersDetail);
         trigger.setCronExpression("59 59 21 ? * * *");
+        return trigger;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean chargerForCompletionTrigger(JobDetail sendJobToChargerForCompletionDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobToChargerForCompletionDetail);
+        trigger.setCronExpression("59 59 22 ? * * *");
         return trigger;
     }
 
