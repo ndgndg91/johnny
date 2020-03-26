@@ -5,15 +5,19 @@ import com.johnny.cs.line.domain.response.common.From;
 import com.johnny.cs.line.domain.response.common.To;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
 @Getter
 @Setter
-@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class MailInfo {
     private long mailSN;
@@ -79,4 +83,35 @@ public final class MailInfo {
     public boolean hasScheduledMail(){
         return 0x00400000L == (0x00400000L & status);
     }
+
+
+    /**
+     * 답장 안 한지 30분이 지났는지
+     */
+    public boolean isUnRepliedForThirtyMinutes(){
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime mailReceivedTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(receivedTime), ZoneId.systemDefault());
+        return ChronoUnit.MINUTES.between(mailReceivedTime, now) >= 30;
+    }
+
+    /**
+     * 답장 안 한지 1시간이 지났는지
+     */
+    public boolean isUnRepliedForOneHour(){
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime mailReceivedTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(receivedTime), ZoneId.systemDefault());
+        return ChronoUnit.HOURS.between(mailReceivedTime, now) >= 1;
+    }
+
+    @Override
+    public String toString() {
+        return new ReflectionToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("mailSN", mailSN)
+                .append("from", from)
+                .append("toList", toList)
+                .append("subject", subject)
+                .append("attachCount", attachCount)
+                .toString();
+    }
 }
+

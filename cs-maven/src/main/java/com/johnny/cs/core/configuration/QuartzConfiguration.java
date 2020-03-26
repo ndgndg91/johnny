@@ -6,8 +6,7 @@ import com.johnny.cs.core.job.today.SendJobToTodayHolidayCharger;
 import com.johnny.cs.core.job.today.SendJobToTodayNighttimeCharger;
 import com.johnny.cs.core.job.today.SendJobToTodayWeeklyChargers;
 import com.johnny.cs.core.job.tomorrow.SendJobToTomorrowChargers;
-import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMailOnWeekEnd;
-import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMailOnWeekly;
+import com.johnny.cs.core.job.unreadmail.SendJobForUnRepliedMail;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -23,20 +22,11 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 public class QuartzConfiguration {
 
     @Bean
-    public JobDetail sendJobForUnRepliedMailOnWeekEndDetail() {
-        return JobBuilder.newJob().ofType(SendJobForUnRepliedMailOnWeekEnd.class)
+    public JobDetail sendJobForUnRepliedMailDetail() {
+        return JobBuilder.newJob().ofType(SendJobForUnRepliedMail.class)
                 .storeDurably()
-                .withIdentity("SendJobForUnRepliedMailOnWeekEnd")
-                .withDescription("LineWorks help account check unread email and unReply email on weekend")
-                .build();
-    }
-
-    @Bean
-    public JobDetail sendJobForUnRepliedMailOnWeeklyDetail() {
-        return JobBuilder.newJob().ofType(SendJobForUnRepliedMailOnWeekly.class)
-                .storeDurably()
-                .withIdentity("SendJobForUnRepliedMailOnWeekly")
-                .withDescription("LineWorks help account check unread email and unReply email on weekly")
+                .withIdentity("SendJobForUnRepliedMail")
+                .withDescription("LineWorks help account check unread email and unReply email")
                 .build();
     }
 
@@ -85,25 +75,7 @@ public class QuartzConfiguration {
                 .build();
     }
 
-//    @Bean
-//    public CronTriggerFactoryBean unRepliedMailOnWeekEndTrigger(JobDetail sendJobForUnRepliedMailOnWeekEndDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobForUnRepliedMailOnWeekEndDetail);
-//        trigger.setCronExpression("* 0/1 9-23 ? * SAT,SUN *");
-//        return trigger;
-//    }
-//
-//    @Bean
-//    public CronTriggerFactoryBean unRepliedMailOnWeeklyTrigger(JobDetail sendJobForUnRepliedMailOnWeeklyDetail) {
-//        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
-//        trigger.setJobDetail(sendJobForUnRepliedMailOnWeeklyDetail);
-//        trigger.setCronExpression("* 0/1 18-23 ? * MON,TUE,WED,THU,FRI *");
-//        return trigger;
-//    }
-
     /**
-     * 절취선 위의 주석은 미완성
-     * *******************
      * 테스트 잡
      */
     @Bean
@@ -123,6 +95,13 @@ public class QuartzConfiguration {
         return trigger;
     }
 
+    @Bean
+    public CronTriggerFactoryBean unRepliedMailTrigger(JobDetail sendJobForUnRepliedMailDetail) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
+        trigger.setJobDetail(sendJobForUnRepliedMailDetail);
+        trigger.setCronExpression("0 0,10,20,30,40,50 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 ? * * *");
+        return trigger;
+    }
 
     @Bean
     public CronTriggerFactoryBean todayHolidayChargerTrigger(JobDetail sendJobToTodayHolidayChargerDetail) {

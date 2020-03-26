@@ -32,17 +32,20 @@ public class LineWorksController {
 
        AccessCodeResponse accessToken = lineWorksService.getAccessToken(request.getCode());
        if ( ! accessToken.getErrorCode().equals("00")) {
+           log.info("라인웍스 메일 접근 권한 없음!!");
            return ResponseEntity.status(401).build();
        }
 
         Set<MailInfo> unRepliedMails = lineWorksService.getUnRepliedMails(accessToken.getAccessToken());
         log.info("{}", unRepliedMails);
+        log.info("{}", unRepliedMails.size());
+        lineWorksService.checkUnRepliedMailDuration(unRepliedMails);
         return ResponseEntity.ok(unRepliedMails);
     }
 
     @GetMapping("/line/test")
-    public ResponseEntity<String> lineTest() throws InterruptedException {
-        lineWorksService.getAccessCode();
+    public ResponseEntity<String> lineTest() {
+        lineWorksService.unRepliedMailCheck();
         return ResponseEntity.ok("일단 OK");
     }
 }

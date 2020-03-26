@@ -12,6 +12,7 @@ import com.johnny.cs.alarm.domain.Bizm;
 import com.johnny.cs.alarm.domain.Template;
 import com.johnny.cs.alarm.util.BizmUtils;
 import com.johnny.cs.core.domain.person.Charger;
+import com.johnny.cs.core.domain.person.HoBot;
 import com.johnny.cs.core.domain.person.HolidayCharger;
 import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
 import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
@@ -96,18 +97,39 @@ public class AlarmService {
     }
 
     private String getBizmBody(Charger charger) {
+        return getBizmBody(charger.getName(),
+                charger.getTemplate().getTemplateCode(),
+                charger.getPhone(),
+                charger.getTemplate().getPattern());
+    }
+
+    private String getBizmBody(String name, String templateCode, String phone, String pattern) {
         Bizm bizm = Bizm.builder()
                 .sendPhone(sendPhone)
-                .name(charger.getName())
+                .name(name)
                 .msgId(BizmUtils.generateKey())
                 .profileKey(profileKey)
-                .templateCode(charger.getTemplate().getTemplateCode())
-                .receiverNum(charger.getPhone())
-                .message(charger.getTemplate().getPattern())
+                .templateCode(templateCode)
+                .receiverNum(phone)
+                .message(pattern)
                 .reservedTime(IMMEDIATELY)
                 .build();
         bizm.reviseChargerName();
         return "[" + JacksonUtils.toJson(bizm) + "]";
+    }
+
+    public void sendToHoBot(Charger charger) {
+        HoBot hoBot = HoBot.getInstance();
+        String bizmBody = getBizmBody(hoBot, charger);
+        log.info(bizmBody);
+        send(bizmBody);
+    }
+
+    private String getBizmBody(HoBot hoBot, Charger charger) {
+        return getBizmBody(charger.getName(),
+                hoBot.getTemplate().getTemplateCode(),
+                hoBot.getPhone(),
+                hoBot.getTemplate().getPattern());
     }
 
     private void send(String body) {

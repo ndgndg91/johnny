@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.FileNotFoundException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -65,6 +65,35 @@ class CsApplicationTests {
         } while (keys.contains(johnnyKey));
 
         System.out.println(johnnyKey);
+    }
+    
+    @Test
+    public void hourTest() throws Exception {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+
+        //when
+        int hour = now.getHour();
+        System.out.println(hour);
+    }
+
+    @Test
+    public void epochTest() throws Exception {
+        LocalDateTime mailReceivedTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(1585209628), ZoneId.systemDefault());
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(mailReceivedTime);
+        System.out.println(now);
+
+        long betweenMinutes = ChronoUnit.MINUTES.between(mailReceivedTime, now);
+        long betweenHours = ChronoUnit.HOURS.between(mailReceivedTime, now);
+        System.out.println(betweenMinutes);
+        System.out.println(betweenHours);
+
+        LocalDateTime plus10Minutes = now.plusMinutes(10);
+        long b = ChronoUnit.MINUTES.between(now, plus10Minutes);
+        long b2 = ChronoUnit.HOURS.between(now, plus10Minutes);
+        System.out.println(b);
+        System.out.println(b2);
     }
 
 }

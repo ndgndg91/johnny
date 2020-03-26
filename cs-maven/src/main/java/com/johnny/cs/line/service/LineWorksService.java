@@ -3,13 +3,22 @@ package com.johnny.cs.line.service;
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
+import com.johnny.cs.alarm.domain.Template;
+import com.johnny.cs.alarm.service.AlarmService;
+import com.johnny.cs.core.domain.person.Charger;
+import com.johnny.cs.core.domain.person.HolidayCharger;
+import com.johnny.cs.core.domain.person.today.TodayHolidayCharger;
+import com.johnny.cs.core.domain.person.today.TodayNighttimeCharger;
+import com.johnny.cs.core.util.JacksonUtils;
+import com.johnny.cs.date.service.HolidayService;
 import com.johnny.cs.line.domain.request.AccessTokenRequest;
 import com.johnny.cs.line.domain.response.AccessCodeResponse;
 import com.johnny.cs.line.domain.response.mailfolder.MailData;
 import com.johnny.cs.line.domain.response.mailfolder.MailListResponse;
-import com.johnny.cs.core.util.JacksonUtils;
 import com.johnny.cs.line.domain.response.mailread.MailInfo;
 import com.johnny.cs.line.domain.response.mailread.ReadMailResponse;
+import com.johnny.cs.spreadsheet.service.SpreadSheetsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -23,14 +32,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class LineWorksService {
 
     @Value("${api.auth.url}")
@@ -57,7 +70,7 @@ public class LineWorksService {
     @Value("${api.mailList.sortField}")
     private String sortStandard;
 
-    private static final String PAGE_SIZE = "10";
+    private static final String PAGE_SIZE = "5";
 
     @Value("${api.readMail.url}")
     private String readMailUrl;
@@ -65,11 +78,16 @@ public class LineWorksService {
     @Value("${google.chrome.driver.path}")
     private String chromeDriverPath;
 
-    public void getAccessCode() throws InterruptedException {
+    private final AlarmService alarmService;
+
+    private final SpreadSheetsService spreadSheetsService;
+
+    private final HolidayService holidayService;
+
+    public void unRepliedMailCheck() {
         log.info(authUrl);
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         WebDriver driver = new ChromeDriver();
-        Thread.sleep(500);
         driver.get(authUrl);
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         if (executor.executeScript("return document.readyState").equals("complete")) {
@@ -80,7 +98,6 @@ public class LineWorksService {
             WebElement inputPassword = driver.findElement(By.id("password"));
             inputPassword.clear();
             inputPassword.sendKeys(helpPassword);
-            Thread.sleep(1000);
             WebElement btn = driver.findElement(By.className("btn"));
             btn.click();
         }
@@ -168,5 +185,70 @@ public class LineWorksService {
                 .append(URLEncoder.encode(String.valueOf(mailSN), UTF_8));
         urlBuilder.append("&").append(URLEncoder.encode("threadMail", UTF_8)).append("=").append("true");
         return urlBuilder.toString();
+    }
+
+    public void checkUnRepliedMailDuration(Set<MailInfo> unRepliedMails) {
+        Set<MailInfo> lateMails = unRepliedMails.stream()
+                .filter(MailInfo::isUnRepliedForOneHour)
+                .collect(Collectors.toUnmodifiableSet());
+
+        if (!lateMails.isEmpty()) {
+            log.info("{}", lateMails);
+            getLateCharger().ifPresent(c -> {
+                alarmService.sendAlarm(c);
+                alarmService.sendToHoBot(c);
+            });
+            log.info("지각 메일 {} 통 있음, 알림 전송 완료!", lateMails.size());
+            return;
+        }
+
+        Set<MailInfo> rushToReplyMails = unRepliedMails.stream()
+                .filter(MailInfo::isUnRepliedForThirtyMinutes)
+                .collect(Collectors.toUnmodifiableSet());
+
+        if (!rushToReplyMails.isEmpty()) {
+            log.info("{}", rushToReplyMails);
+            getRushCharger().ifPresent(c -> {
+                alarmService.sendAlarm(c);
+                alarmService.sendToHoBot(c);
+            });
+            log.info("30분 답장 안 한 메일 {} 통 있음, 알림 전송 완료!", rushToReplyMails.size());
+        }
+    }
+
+    private Optional<Charger> getLateCharger(){
+        boolean todayIsHoliday = holidayService.isHoliday(LocalDate.now());
+        boolean todayIsWeekDay = !todayIsHoliday;
+        Charger lateCharger = null;
+
+        if (todayIsHoliday) {
+            TodayHolidayCharger todayHolidayCharger = spreadSheetsService.getTodayHolidayCharger(Template.SEND_UN_REPLIED_MAIL_1H_CHARGER);
+            lateCharger = todayHolidayCharger.getHolidayCharger();
+        }
+
+        if (todayIsWeekDay) {
+            TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers(Template.SEND_UN_REPLIED_MAIL_1H_CHARGER);
+            lateCharger = todayNighttimeChargers.getNighttimeCharger();
+        }
+
+        return Optional.ofNullable(lateCharger);
+    }
+
+    private Optional<Charger> getRushCharger(){
+        boolean todayIsHoliday = holidayService.isHoliday(LocalDate.now());
+        boolean todayIsWeekDay = !todayIsHoliday;
+        Charger lateCharger = null;
+
+        if (todayIsHoliday) {
+            TodayHolidayCharger todayHolidayCharger = spreadSheetsService.getTodayHolidayCharger(Template.SEND_UN_REPLIED_MAIL_30M_CHARGER);
+            lateCharger = todayHolidayCharger.getHolidayCharger();
+        }
+
+        if (todayIsWeekDay) {
+            TodayNighttimeCharger todayNighttimeChargers = spreadSheetsService.getTodayNighttimeChargers(Template.SEND_UN_REPLIED_MAIL_30M_CHARGER);
+            lateCharger = todayNighttimeChargers.getNighttimeCharger();
+        }
+
+        return Optional.ofNullable(lateCharger);
     }
 }
