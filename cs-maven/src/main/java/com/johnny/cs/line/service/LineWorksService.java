@@ -188,6 +188,10 @@ public class LineWorksService {
     }
 
     public void checkUnRepliedMailDuration(Set<MailInfo> unRepliedMails) {
+        if (unRepliedMails.isEmpty()) {
+            return;
+        }
+
         Set<MailInfo> lateMails = unRepliedMails.stream()
                 .filter(MailInfo::isUnRepliedForOneHour)
                 .collect(Collectors.toUnmodifiableSet());
