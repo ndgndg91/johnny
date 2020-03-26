@@ -32,11 +32,13 @@ public class SendJobForUnRepliedMail implements Job {
 
         //평일 09:00 ~ 18:00 아무것도 안한다.
         if (todayIsWeekDay && nowIsWeeklyWorkTime) {
+            log.info("오늘은 평일이고 근무시간이라서 메일 체킹은 하지 않는다!!");
             return;
         }
 
         //평일 18:00 ~ 23:00 와 휴일 일 때는 09:00 ~ 23:00 일 때는 메일 체킹을 한다.
-        //답장 보내지 않는 메일이 있는 경우 현재 담당자와 동호님에게 알림을 보낸다.
+        //답장 보내지 않은 메일이 있는 경우 현재 담당자와 동호님에게 알림을 보낸다.
         lineWorksService.unRepliedMailCheck();
+        log.info("평일 야간 CS 시간 혹은 휴일 CS 시간 중 답장 보내지 않은 메일 체킹하는 job 완료!");
     }
 }

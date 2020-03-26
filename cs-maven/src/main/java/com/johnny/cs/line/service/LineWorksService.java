@@ -91,7 +91,6 @@ public class LineWorksService {
         driver.get(authUrl);
         JavascriptExecutor executor = (JavascriptExecutor) driver;
         if (executor.executeScript("return document.readyState").equals("complete")) {
-            log.info("완료 했엉!");
             WebElement inputId = driver.findElement(By.id("inputId"));
             inputId.clear();
             inputId.sendKeys(helpId);
@@ -100,9 +99,10 @@ public class LineWorksService {
             inputPassword.sendKeys(helpPassword);
             WebElement btn = driver.findElement(By.className("btn"));
             btn.click();
+            log.info("로그인 버튼 클릭!");
         }
         driver.close();
-        log.info("이유가 뭐지?");
+        log.info("크롬 드라이버 일은 완료 했엉!");
     }
 
     public AccessCodeResponse getAccessToken(String code) throws IOException {
