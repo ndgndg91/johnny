@@ -12,7 +12,6 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthorizationInterceptor())
                 .addPathPatterns("/alarm/me")
-                .addPathPatterns("/line/test")
                 .addPathPatterns("/get/**")
                 .addPathPatterns("/holiday/**");
     }
