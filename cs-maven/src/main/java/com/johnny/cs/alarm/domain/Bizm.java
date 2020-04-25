@@ -34,6 +34,7 @@ public class Bizm {
     private String reservedTime;
 
     public void reviseChargerName(){
+        name = name.replace("(휴)", "");
         message = message.replace("#{CS_NAME}", name);
     }
 }
