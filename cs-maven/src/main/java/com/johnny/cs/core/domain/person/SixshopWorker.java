@@ -49,8 +49,8 @@ public enum SixshopWorker {
     KSJ_HOLIDAY(new Charger("선진(휴)", "821093605445"), true),
     PSH_HOLIDAY(new Charger("세호(휴)", "821091346807"), true);
 
-    private Charger charger;
-    private boolean isDomestic;
+    private final Charger charger;
+    private final boolean isDomestic;
 
     SixshopWorker(Charger charger, boolean isDomestic) {
         this.charger = charger;
