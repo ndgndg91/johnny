@@ -1,7 +1,9 @@
 package com.johnny.cs.core.domain.person.tomorrow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -40,6 +42,10 @@ public class TomorrowCharger {
 
     @JsonIgnore
     public List<Charger> getWeekDayChargers(){
+        if (Objects.isNull(weeklyChargers)) {
+            return Collections.emptyList();
+        }
+
         List<Charger> weekDayChargers = new ArrayList<>(weeklyChargers);
         weekDayChargers.add(rotationCharger);
         weekDayChargers.add(nighttimeCharger);

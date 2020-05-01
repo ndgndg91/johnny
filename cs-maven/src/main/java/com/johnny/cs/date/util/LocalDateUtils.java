@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public final class LocalDateUtils {
+    private static final String MONTH = "월";
 
     private LocalDateUtils(){}
 
@@ -11,7 +12,11 @@ public final class LocalDateUtils {
         return String.valueOf(LocalDate.now().getDayOfMonth());
     }
 
-    public static String getTomorrowString(){
+    public static String getMonthOfTomorrowString() {
+        return LocalDate.now().plusDays(1).getMonth().getValue() + MONTH;
+    }
+
+    public static String getDayOfTomorrowString(){
         return String.valueOf(LocalDate.now().plusDays(1).getDayOfMonth());
     }
 

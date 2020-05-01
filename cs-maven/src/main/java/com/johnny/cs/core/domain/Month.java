@@ -34,12 +34,12 @@ public enum  Month {
     NOV(11, 54, 59, 55, 60),
     DEC(12, 60, 64, 61, 65);
 
-    private int value;
-    private int startIndex;
-    private int endIndex;
+    private final int value;
+    private final int startIndex;
+    private final int endIndex;
 
-    private int startRowIndex;
-    private int endRowIndex;
+    private final int startRowIndex;
+    private final int endRowIndex;
 
     Month(int value, int startIndex, int endIndex, int startRowIndex, int endRowIndex) {
         this.value = value;

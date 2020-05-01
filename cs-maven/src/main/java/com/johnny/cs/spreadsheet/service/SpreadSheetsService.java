@@ -12,6 +12,7 @@ import com.johnny.cs.core.util.PhoneUtils;
 import com.johnny.cs.date.util.LocalDateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -125,14 +126,15 @@ public class SpreadSheetsService {
 
     private List<String> getTodayChargers(List<List<Object>> values) {
         String today = LocalDateUtils.getTodayString();
-        String tomorrow = LocalDateUtils.getTomorrowString();
+        String tomorrow = LocalDateUtils.getDayOfTomorrowString();
         return getChargersByDay(values, today, tomorrow);
     }
 
     private List<String> getTomorrowChargers(List<List<Object>> values) {
-        String tomorrow = LocalDateUtils.getTomorrowString();
+        String monthOfTomorrow = LocalDateUtils.getMonthOfTomorrowString();
+        String tomorrow = LocalDateUtils.getDayOfTomorrowString();
         String dayAfterTomorrow = LocalDateUtils.getDayAfterTomorrowString();
-        return getChargersByDay(values, tomorrow, dayAfterTomorrow);
+        return getChargersByMonthAndDay(values, monthOfTomorrow, tomorrow, dayAfterTomorrow);
     }
 
     private List<String> getSpecificDayChargers(List<List<Object>> values, byte month, byte day) {
@@ -140,6 +142,30 @@ public class SpreadSheetsService {
         String targetDay = String.valueOf(targetDate.getDayOfMonth());
         String dayAfterTargetDay = String.valueOf(targetDate.plusDays(1).getDayOfMonth());
         return getChargersByDay(values, targetDay, dayAfterTargetDay);
+    }
+
+    private List<String> getChargersByMonthAndDay(
+            List<List<Object>> values,
+            String monthOfTargetDay,
+            String targetDay,
+            String dayAfterTargetDay
+    )
+    {
+        List<List<Object>> rowsContainingMonthOfTomorrow = getRowsContainingMonthOfTomorrow(values, monthOfTargetDay);
+        return getChargersByDay(rowsContainingMonthOfTomorrow, targetDay, dayAfterTargetDay);
+    }
+
+    private List<List<Object>> getRowsContainingMonthOfTomorrow(List<List<Object>> values, String monthOfTargetDay) {
+        int startIdxOfTargetMonth = 0;
+        for (int idx = 0; idx < values.size(); idx++) {
+            List<Object> row = values.get(idx);
+            if (row.contains(monthOfTargetDay)) {
+                startIdxOfTargetMonth = idx;
+                break;
+            }
+        }
+
+        return values.subList(startIdxOfTargetMonth, values.size());
     }
 
     private List<String> getChargersByDay(List<List<Object>> values, String targetDay, String dayAfterTargetDay) {
@@ -169,7 +195,9 @@ public class SpreadSheetsService {
                 continue;
             }
 
-            chargers.add(canBeTwoPeople);
+            if (StringUtils.isNotBlank(canBeTwoPeople)) {
+                chargers.add(canBeTwoPeople);
+            }
         }
 
         return chargers;
