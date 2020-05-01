@@ -6,15 +6,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class LocalDateUtils {
-    private static final Set<LocalDate> TEMP_HOLIDAYS_IN_2020 = new HashSet<>();
+    private static final Set<String> TEMP_HOLIDAYS_IN_2020 = initTempHolidaysIn2020();
     private static final String MONTH = "월";
 
-    private LocalDateUtils(){
-        TEMP_HOLIDAYS_IN_2020.add(LocalDate.of(2020, 5, 1)); //근로자의 날
+    private LocalDateUtils(){}
+
+    private static Set<String> initTempHolidaysIn2020(){
+        Set<String> tempHolidays = new HashSet<>();
+        tempHolidays.add(LocalDate.of(2020, 5, 1).toString()); //근로자의 날
+        return tempHolidays;
     }
 
     public static boolean isTempHolidayIn2020(LocalDate target) {
-        return TEMP_HOLIDAYS_IN_2020.contains(target);
+        return TEMP_HOLIDAYS_IN_2020.contains(target.toString());
     }
 
     public static String getTodayString(){

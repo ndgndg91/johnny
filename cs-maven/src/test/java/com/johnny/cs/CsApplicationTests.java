@@ -1,6 +1,7 @@
 package com.johnny.cs;
 
 import com.johnny.cs.alarm.util.BizmUtils;
+import com.johnny.cs.date.util.LocalDateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -96,4 +97,31 @@ class CsApplicationTests {
         System.out.println(b2);
     }
 
+    @Test
+    public void tempHolidayTest() throws Exception {
+        //given
+        LocalDate now = LocalDate.now().withMonth(5).withDayOfMonth(1);
+        Set<String> tempHolidayIn2020 = new HashSet<>();
+        //when
+        tempHolidayIn2020.add(LocalDate.of(2020, 5, 1).toString()); //근로자의 날
+
+
+        //then
+        System.out.println(tempHolidayIn2020.contains(now.toString()));
+        System.out.println(tempHolidayIn2020);
+        System.out.println(now.toString());
+        System.out.println(LocalDate.of(2020, 5, 1).toString());
+     }
+
+     @Test
+     public void tempHolidayTest2() throws Exception {
+         //given
+         LocalDate now = LocalDate.now().withMonth(5).withDayOfMonth(1);
+
+         //when
+         boolean tempHolidayIn2020 = LocalDateUtils.isTempHolidayIn2020(now);
+
+         //then
+         System.out.println(tempHolidayIn2020);
+      }
 }
