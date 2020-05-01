@@ -4,6 +4,7 @@ import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.common.io.CharStreams;
 import com.johnny.cs.date.domain.response.HolidayResponse;
+import com.johnny.cs.date.util.LocalDateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,11 @@ public class HolidayService {
     private String endPoint;
 
     public boolean isHoliday(LocalDate target) {
+        //올해의 임시 공휴일 혹은 식스샵 자체 공휴일의 경우
+        if (LocalDateUtils.isTempHolidayIn2020(target)) {
+            return true;
+        }
+
         if (isWeekEnd(target)) {
             return true;
         }
