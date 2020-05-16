@@ -45,7 +45,7 @@ public class HolidayService {
             return true;
         }
 
-        HttpResponse response = Objects.requireNonNull(getHttpResponse(target), "공공데이터 api 통신 장애 발");
+        HttpResponse response = Objects.requireNonNull(getHttpResponse(target), "공공데이터 api 통신 장애 발생");
         String xml = getResponse(response);
         log.info(xml);
 

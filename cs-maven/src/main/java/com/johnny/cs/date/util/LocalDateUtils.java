@@ -1,7 +1,6 @@
 package com.johnny.cs.date.util;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,10 +34,5 @@ public final class LocalDateUtils {
 
     public static String getDayAfterTomorrowString(){
         return String.valueOf(LocalDate.now().plusDays(2).getDayOfMonth());
-    }
-
-    public static boolean isWeeklyWorkTime() {
-        int hour = LocalDateTime.now().getHour();
-        return hour >= 9 && hour < 18;
     }
 }

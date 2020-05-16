@@ -21,7 +21,6 @@ public final class TestJob implements Job {
 
     private final SpreadSheetsService spreadSheetsService;
 
-
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info("=================================================================테스트 job 시작=================================================================");
