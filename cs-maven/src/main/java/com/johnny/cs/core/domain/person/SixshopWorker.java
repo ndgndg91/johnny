@@ -24,6 +24,7 @@ public enum SixshopWorker {
     KYJ(new Charger("용진", "821041797900"), true),
     KSJ(new Charger("선진", "821093605445"), true),
     PSH(new Charger("세호", "821091346807"), true),
+    LDG(new Charger("동국", "821051048003"), true),
 
     LSM_HOLIDAY(new Charger("상민(휴)", "821091710956"), true),
     CUC_HOLIDAY(new Charger("의철(휴)", "821094981469"), true),
@@ -47,7 +48,8 @@ public enum SixshopWorker {
     SYJ_HOLIDAY(new Charger("영지(휴)", "14044012013"), false),
     KYJ_HOLIDAY(new Charger("용진(휴)", "821041797900"), true),
     KSJ_HOLIDAY(new Charger("선진(휴)", "821093605445"), true),
-    PSH_HOLIDAY(new Charger("세호(휴)", "821091346807"), true);
+    PSH_HOLIDAY(new Charger("세호(휴)", "821091346807"), true),
+    LDG_HOLIDAY(new Charger("동국(휴)", "821051048003"), true);
 
     private final Charger charger;
     private final boolean isDomestic;
