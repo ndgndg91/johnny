@@ -19,9 +19,9 @@ public enum Template {
 
     SEND_TO_HO_BOT("group_six_cs_12", "쟈니_야간휴일_1시간 미답변 팀장", "#{CS_NAME}님이 지금 고객 문의 답변을 1시간째 확인하지 않았습니다. 담당자에게 알려주세요!(부르르)");
 
-    private String templateCode;
-    private String templateName;
-    private String pattern;
+    private final String templateCode;
+    private final String templateName;
+    private final String pattern;
 
     Template(String templateCode, String templateName, String pattern) {
         this.templateCode = templateCode;
