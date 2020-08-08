@@ -13,6 +13,7 @@ public final class LocalDateUtils {
     private static Set<String> initTempHolidaysIn2020(){
         Set<String> tempHolidays = new HashSet<>();
         tempHolidays.add(LocalDate.of(2020, 5, 1).toString()); //근로자의 날
+        tempHolidays.add(LocalDate.of(2020, 8, 17).toString()); //광복절 임시 공휴일
         return tempHolidays;
     }
 
